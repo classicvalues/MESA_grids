@@ -1,0 +1,25 @@
+grid_0 (Oct 19, 2016):
+
+* I ran a grid from 0.2Msun to 1.4Msun, and 1/10th solar to 10x solar. I
+  stepped it by 0.2Msun in mass, and 0.5dex in metallicity (total: 30 stars).
+* I put a maximum age as 11Gyr, and let them run for 3 hours (a single core
+  each) on adroit. I can do up to 60 stars at a time this way (i.e. I get at
+  most 60 cores at a time. The submission is pretty cool -- I've structured it
+  so that queue times are typically <5 minutes). Many stars reach the max age
+  within ~30minutes clock time, but many others (e.g., massive stars) do not.
+* Once you get past the main sequence, through the subgiant branch and into the
+  red giant branch the adaptive timestep becomes very short and the evolution
+  doesn't get past the max age you can see in the plots. There might be some
+  dependence of metallicity on this too -- I haven't looked through that data
+  yet.
+* My write-frequency for the stellar models is a multiple of the timesteps, and
+  I have a hard-cap on the maximum number of models to save from any given
+  star. Then they start overwriting the initial data from the run. This is what
+  some of the attached plots are missing data in their early lives (I'm also
+  only processing data from past 0.5Myr).
+
+
+
+grid_1 (Nov 1, 2016):
+
+

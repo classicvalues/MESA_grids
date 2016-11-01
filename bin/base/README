@@ -1,0 +1,9 @@
+BOUMA'S OVERVIEW
+==============================
+
+inlist: Gets read as the base for all models.
+inlist_to_run: As in this directory.
+inlist_cluster: As saved in the /mesa/data/ directories (these are the
+  variables that change over runs)
+
+Tue 01 Nov 2016 03:19:47 PM EDT

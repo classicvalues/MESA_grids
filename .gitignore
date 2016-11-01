@@ -1,0 +1,10 @@
+mesa*
+lectures
+tides-project*
+iso*
+tutorial
+py_mesa*
+data/grid_?/*out
+data/grid_?/*_M*_Z*/LOGS
+data/grid_?/*_M*_Z*/photos
+data/grid_?/*_M*_Z*/und*
