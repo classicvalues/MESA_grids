@@ -58,7 +58,6 @@
 
       history_interval = 1
       terminal_interval = 10
-      !terminal_interval = 1000000
       write_header_frequency = 10
       photo_digits = 5
       photostep = 250
@@ -70,16 +69,16 @@
       write_controls_info_with_profile = .false.
       write_profiles_flag = .true.
       profile_interval = 5
-      max_model_number = 2000
-      max_num_profile_models = 400
+      max_model_number = 2500
+      max_num_profile_models = 500
 
 !WHEN TO STOP
 
       !in run_star_extras, it's set to H1 depletion in the core for M<0.7Msun stars
-      gamma_center_limit = 20.0
+      !gamma_center_limit = 20.0
       !however, for greater masses it's C12 depletion. For us, beyond 10Gyr
       !we're not interested.
-      max_age = 1.1d10
+      !max_age = 1.1d10
       !max allowed radius: becomes a problem in pre-MS
       !photosphere_r_upper_limit = 3.0
       !log_L_upper_limit = 1.5
