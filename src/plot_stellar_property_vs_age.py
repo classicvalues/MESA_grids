@@ -54,10 +54,13 @@ def main():
             dat['I_tot'] = dat['I_conv'] + dat['I_rad']
 
             color_val = scalar_map.to_rgba(masses[ind])
-            x_val = np.log10(dat.sort('age')['age'])
-            y_val = np.log10(dat.sort('age')[stellar_param]) if logy \
-                else dat.sort('age')[stellar_param]
-            ax.plot(x_val, y_val, c=color_val, label=star)
+            x_val = np.array(np.log10(dat.sort('age')['age']))
+            y_val = np.array(np.log10(dat.sort('age')[stellar_param])) if logy \
+                else np.array(dat.sort('age')[stellar_param])
+            if len(x_val) > 1:
+                ax.plot(x_val, y_val, c=color_val, label=star)
+            if len(x_val) <= 1:
+                print('Bad data: {:s} {:s}'.format(stellar_param, star))
         
         handles,labels = ax.get_legend_handles_labels()
         desired_order = np.sort(labels)

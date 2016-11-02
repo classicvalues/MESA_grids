@@ -70,8 +70,8 @@
       write_controls_info_with_profile = .false.
       write_profiles_flag = .true.
       profile_interval = 5
-      max_num_profile_models = 400 ! good for 1Msun. Up to 1.2, need maybe 300.
-
+      max_model_number = 2000
+      max_num_profile_models = 400
 
 !WHEN TO STOP
 
@@ -82,7 +82,8 @@
       max_age = 1.1d10
       !max allowed radius: becomes a problem in pre-MS
       !photosphere_r_upper_limit = 3.0
-      log_L_upper_limit = 1.5
+      !log_L_upper_limit = 1.5
+      he_core_mass_limit = 0.1
 
             
 !PHYSICS

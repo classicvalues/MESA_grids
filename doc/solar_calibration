@@ -1,0 +1,50 @@
+Important emails from the relevant weeks:
+* Dave Williams
+* Jieun Choi
+* Dappen & Rhodes.
+
+Two relevant things:
+1) We want to reproduce the sun's moment of inertia. This requires knowing what
+it is. Values listed on the web (e.g. by Dave Williams' goddard-hosted site)
+are wrong, and any value in the literature is model dependent. You can compute
+it based on a variety of ρ(r) profiles. Values in the literature:
+  * Integrating Schwarzschild 1958 standard solar model gives 6.2e53.
+  * Ditto Christen-Dalsgaard 1996 gives 7.07990201e53, which is used in
+    wrangle_output.py for comparison.
+    Non-dimensionalized (dividing out by Choi+ mass*radius^2) gives 0.073573.
+  Other papers include (research by David Williams in his email):
+  * Gravitational potential energy of the Sun, Bursa, M, et al., 
+    STUDIA GEOPHYSICA ET GEODAETICA   Volume: 40   Issue: 1 Published: 1996
+    Which uses a 1981 model of Landolt-Bornstein and appears to come up with 
+    I = 0.07897.
+  * Iorio, Solar Physics, 1:47, July 2012 summarizes a bunch of angular
+    momentum numbers and gives an average which corresponds to a moment of
+    inertia of 0.0696, although they have values that go as high as 0.074, but
+    as low as 0.059 (Robinson, 2000).  
+  * Ballet and Bouvier, Astronomy and Astrophysics, 577, A98, 2015 quote a value 
+    equivalent to 0.666 without attribution - I think it might just be a simple 
+    model number.  And I
+  * A detailed paper is Komm et al., Astrophysical J., 586, 650, 2003, which
+   gives an angular momentum of 1.94 x 10**48 g cm**2 /s which translates to
+   a moment of inertia of 0.0704.
+
+We use the value from CD96 as our reference solar moment of inertia. Different
+reliable-seeming sources in the literature vary by as much as 5% away from this.
+
+2) We want to reproduce the sun's L, R, Teff at ~4.5Gyr (4.57, which is the
+commonly assumed "age of the Sun", which I think (not sure) included PMS
+contractions (see Bahcall+ 2006)).
+The MIST input parameters as published, and also as given by Choi et al on the
+MIST website, do not produce the sun when using protosolar abundances tuned to 
+match modern-day abundances given by Asplund+ 2009. This is a "well-known" 
+problem in the field.
+Jieun Choi, in her emails, noted the inconsistencies, but apparently in their
+work they opted to keep using the protosolar abundances required to match
+Asplund's envelope abundances in order to... match the sound speed profile
+better? Not incredibly sure.
+REGARDLESS Table 2 of Choi+ (2016) gives special solar-calibrated values that DO
+work when implemented with eqs (1)-(3) of the Choi+ (2016) paper.
+This uses both a mixing length and special protosolar abundances that are tuned
+to match the modern day sun's LRTeff, and it works (see Choi emails).
+
+

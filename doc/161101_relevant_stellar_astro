@@ -1,0 +1,53 @@
+Tue 01 Nov 2016 05:07:05 PM EDT
+
+We want to know how we can terminate our models at "the right" point for this
+project. Follow Catelan & Smith, Ch4's description of low stellar mass
+evolution.
+
+Quoting them:
+"After the MS has completed, we hit the turn-off point. This is related to the
+exhaustion of hydrogen in star's center. From here onwards, hydrogen burning is
+no longer a central process, becoming instead a shell-burning process.
+Initially, hydrogen burns in a thick shell, whereas the He-rich core, which is
+now becoming isothermal, grows in size as a consequence of the He being
+produced at its outer boarder. Note the maximum mass that the isothermal core
+can be at while still supporting the layers above it is the
+Schonberg-Cahndrasekhar mass, about 10% of the total mass of the star. Once its
+mass increases beyond this point, the core collapses on a thermal timescale,
+heating up and releasing energy. The rise in core temperatures then leads to a
+rise in temperature at the base of the thickening H-burning shell, and
+accordingly H-burning by the CNO cycle becomes more important (it in fact was
+already dominant in the center before the turn-off point was reached). Because
+the CNO cycle has a high T dependence, the H-burning shell becomes thinner and
+thinner. However, not all the energy released by the H-burning shell reaches
+the surface: part of it is used to expand to star's envelope. As a consequence
+of the expansion, the star begins to cool, and the evolution to the right on
+the HR diagram is the _subgiant phase_.
+The corresponding cooling of the outer layers leads to the formation of
+convective envelope, and the star enventually reaches the base of the RGB.
+Furthe rcontraction of the core leads to the establishment of electron
+degeneracy there. Then, when the star reaches the base of the RGB< its
+structure is characterized by a growing but inert, partially degenerate
+He-core, surrounded by a H-burning shell that is becoming thinner, and an outer
+convectiv envelope that is becoming thicker."
+
+By the time of the ensuant "firt dredge-up" phase, when the convective envelop
+reaches it smaximum inward penetration (and thus is dredging up material that
+has been partially processing nuclearly, including small amounts of He), the
+star is at (logL,logTeff)=(1, 3.7). This is big enough.
+
+
+
+  log_center_density_limit 
+  he_core_mass_limit 
+  log_L_upper_limit (note docs say "in order to skip pre-ms, this limit only
+    applies when L_nuc > 0.01*L")
+  log_g_lower_limit ! stop when log10(gravity at surface) is less than this
+    limit.
+  power_he_burn_upper_limit ! stop when total power from reactions burning
+    helium (in Lsun units) is > this.
+
+Try:
+  he_core_mass_limit = 0.1
+also add:
+  max_model_number = 2000

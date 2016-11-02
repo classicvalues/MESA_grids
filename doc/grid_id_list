@@ -22,4 +22,19 @@ grid_0 (Oct 19, 2016):
 
 grid_1 (Nov 1, 2016):
 
+Tried a run with `log_L_upper_limit = 1.5`. This was a problem (i.e. it
+terminated models too early) during early contraction (at <5e5 years, which I
+wasn't plotting in postprocessing but which I'm still computing).
+The similar naive idea, which is to say `photosphere_r_upper_limit = 3.0`
+will produce the same problem.
+Other ideas:
+  log_center_density_limit 
+  he_core_mass_limit 
+  log_L_upper_limit (note docs say "in order to skip pre-ms, this limit only
+    applies when L_nuc > 0.01*L")
+  log_g_lower_limit ! stop when log10(gravity at surface) is less than this
+    limit.
+  power_he_burn_upper_limit ! stop when total power from reactions burning
+    helium (in Lsun units) is > this.
+
 
