@@ -71,7 +71,8 @@ def main():
                 loc='best', fontsize='xx-small')
 
             ylab = 'log10('+stellar_param+')' if logy else stellar_param
-            ax.set(xlabel='log10(age[yr])', ylabel=ylab)
+            agelim = [5,12]
+            ax.set(xlabel='log10(age[yr])', ylabel=ylab, xlim=agelim)
 
             plot_dir = grid_base + '/plots/'
             pdf_name = plot_dir+stellar_param+'_vs_t_varM_Z'+str(Z)+'.pdf'
