@@ -29,7 +29,7 @@ def main():
     table_paths = get_table_paths(grid_base)
     star_names = [tp.split('/')[-1][:-4] for tp in table_paths]
     masses, Zs = [float(s.split('_')[0][1:]) for s in star_names], \
-                 [float(s.split('_')[1][1:]) for s in star_names]
+                 np.unique([float(s.split('_')[1][1:]) for s in star_names])
     mass_step = float(np.diff(np.sort(masses))[0])
 
     param_list = ['R_star', 'L_star', 'R_tachocline', 'I_conv', 'I_rad',
@@ -43,13 +43,15 @@ def main():
             c_norm = mpl.colors.Normalize(vmin=min(masses), vmax=max(masses))
             scalar_map = mpl.cm.ScalarMappable(norm=c_norm, cmap='viridis')
 
-            for ind, star in enumerate(star_names):
+            allowed_stars = [s for s in star_names if 'Z'+str(Z) in s]
+            for ind, star in enumerate(np.sort(allowed_stars)):
+                mass = star.split('_')[0][1:]
                 table_path = [p for p in table_paths if star in p]
                 assert len(table_path)==1
                 dat = pd.read_csv(table_path[0])
                 dat['I_tot'] = dat['I_conv'] + dat['I_rad']
 
-                color_val = scalar_map.to_rgba(masses[ind])
+                color_val = scalar_map.to_rgba(mass)
                 x_val = np.array(np.log10(dat.sort('age')['age']))
                 y_val = np.array(np.log10(dat.sort('age')[stellar_param])) if logy \
                     else np.array(dat.sort('age')[stellar_param])
@@ -72,7 +74,7 @@ def main():
             ax.set(xlabel='log10(age[yr])', ylabel=ylab)
 
             plot_dir = grid_base + '/plots/'
-            pdf_name = plot_dir+stellar_param+'_vs_t_varM_Z'+Z+'.pdf'
+            pdf_name = plot_dir+stellar_param+'_vs_t_varM_Z'+str(Z)+'.pdf'
             f.tight_layout()
             f.savefig(pdf_name)
             plt.close()
