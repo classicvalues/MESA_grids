@@ -1,0 +1,70 @@
+Mon 07 Nov 2016 10:24:25 AM EST
+
+==============================
+GRID 2:
+0.4-1.4Msun, spaced 0.1Msun in mass.
+-1 to 1 in metal mass frac, spaced 0.5dex.
+
+Wiggle. Star means wiggles, then fails:
+M         Z
+0.4       0.0015
+0.4       0.0047
+0.4,0.5   0.015
+0.4*,0.5  0.047
+
+
+==============================
+GRID 3:
+0.39-1.39Msun, spaced 0.1Msun.
+-1 to 1 in metal mass frac, spaced 0.5dex.
+
+Wiggle. Star means wiggles, then fails:
+M           Z
+0.39        0.0015
+0.39,0.49   0.0047
+0.39,0.49   0.015
+0.39*,0.49  0.047
+
+Comment:
+ Identical wiggles + fail. (So reducing mass by 0.01Msun across
+  grid does not make much difference).
+
+==============================
+GRID 5:
+0.41-1.41Msun, spaced 0.1Msun.
+-1 to 1 to metal mass frac, spaced 0.5dex.
+Rationale: seems we fail most at M<0.4Msun. _Can_ we brush this under the rug?
+(Note: "can" is different from "should").
+
+Wiggle. Star means wiggles, then fails:
+M           Z
+0.41        0.0015
+0.41        0.0047
+0.41,0.51   0.015
+0.41*,0.51  0.047
+
+Comment:
+No, this is pretty much the same as grids 2 and 3.
+
+==============================
+GRID 4:
+0.35-1.35Msun, spaced 0.1Msun.
+-1 to 1 in metal mass frac, spaced 0.5dex.
+Rationale: a bigger difference lets us explore the parameter space better.
+
+Wiggle. Star means wiggles, then fails:
+M                 Z
+0.35*,0.45,0.55   0.0015
+0.35*,0.45        0.0047
+0.35*,0.45        0.015
+0.35,0.45,0.55    0.047
+0.35*             0.15
+
+Comment:
+* M0.55_Z0.0015 M0.55_Z0.047 are new outliers: highest mass stars that have 
+  shown wiggle behavior. 
+* Unclear whether M0.35_Z0.15 and M0.35_Z0.047 are wiggle+fail, or just 
+  wiggle.
+
+Summarizing:
+See same dated png.
