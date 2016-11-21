@@ -107,4 +107,19 @@ M           Z
 Comment:
 No, this is pretty much the same as grids 2 and 3.
 
+==============================
+grid_6:
+Mon 21 Nov 2016 02:01:08 PM EST
+
+0.35Msun to 1.35Msun, spaced 0.1Msun
+-1 to 0.5 metal mass frac, 0.5dex spaced
+
+Our wiggles are somewhat worse than those published in MIST models (only
+slightly), and this might have to do with our crazy-short timestep during the
+MS. (? maybe?)
+Here, keep everything the same in inlist_to_run, but change 
+> max_years_for_timestep = 2d9 
+(it was previously 1d8)
+
+(n.b.: in future runs, possibly worth changing report_why_dt_limits)
 

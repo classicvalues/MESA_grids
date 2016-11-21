@@ -101,12 +101,28 @@ issue).
 
 ==============================
 
-** One reasonable new idea: maybe our TIMESTEP is killing us. Some of these
+* One reasonable new idea: maybe our TIMESTEP is killing us. Some of these
 MIST models wiggle, but their MS timestep is so big that they might just "gloss
 over" whatever numerical issues we're trying to resolve... **
 
-Fri 18 Nov 2016 03:59:57 PM EST
-TODO
+> grid_6:
+
+Answer is no. Timestep is not a big deal, and in fact smaller timestep may
+actually be more helpful.
+(Comparing grid_6 and grid_4)
+
+
+==============================
+remaining todo
+
+
+** Read carefully thru Choi's input scripts:
+https://github.com/jieunchoi/MIST_codes/blob/master/scripts/make_inlist_inputs.py
+
+B/c she might be using different BCs than what I've been using!!
+
+(Perhaps, just use / adapt hers for adroit?)
+
 
 * Carefully read raw output logs for failed runs. What is happening at the
   relevant times?

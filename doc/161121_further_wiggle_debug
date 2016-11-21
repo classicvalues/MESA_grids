@@ -1,0 +1,24 @@
+** Read carefully thru Choi's input scripts:
+https://github.com/jieunchoi/MIST_codes/blob/master/scripts/make_inlist_inputs.py
+
+B/c she might be using different BCs than what I've been using!!
+
+(Perhaps, just use / adapt hers for adroit?)
+
+
+* Carefully read raw output logs for failed runs. What is happening at the
+  relevant times?
+* Cursory glimpse of the logs show "hydro_newton_step returned ierr". Read MESA
+  source & mailing lists to see what exactly this means & whether this is known
+  behavior.
+
+
+
+
+* Carefully read raw output logs for failed runs. What is happening at the
+  relevant times?
+* Cursory glimpse of the logs show "hydro_newton_step returned ierr". Read MESA
+  source & mailing lists to see what exactly this means & whether this is known
+  behavior.
+* Longer shot: create a simple example, post it to MESA mailing list, see if
+
