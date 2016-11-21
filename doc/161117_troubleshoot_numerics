@@ -1,0 +1,126 @@
+Thu 17 Nov 2016 02:09:01 PM EST
+
+The summary image indicates that if we're willing to impose Mstar>=0.45Msun (or we
+could fine-tune slightly lower), all the models will converge.
+
+However this raises questions. MESA is supposed to "just work" for M<0.45Msun.
+We should trouble-shoot before doing anything like just brushing the lowest
+mass models under the rug; we see the "wiggle" from 0.45-0.55Msun!
+Note that Y^2 isochrones stop at 0.4Msun [J. Hartman discussion], likely b/c of
+some related numerical problems.
+Potentially relevant physical factors (likely do not explain):
+* Maybe the opacity tables change in a smart way that is more than just
+  mass-dependant. (Go to low Mstar, become dominated by molecules). But perhaps
+  not smart enough.
+* Maybe the star becomes fully convective in a risky way. When trying to define 
+  a convective/radiative boundary (in MESA) this becomes a problem.
+* Lower mass -> should spin slower (perhaps isn't incorporated right)
+* Mixing length parameter α should change (but we're saying it doesnt)
+
+
+If not, then the next Qs for trouble-shooting are likely:
+* Does Choi+ 2016 address this? (what is their minimum mass?)
+* Are my luminosity vs age tracks for a single star (the messed up ones) the same 
+  as the MIST ones? (Not sure if they publish them...). If not, why not?
+* When do we see the divergence happening? Is it after age of universe?
+  (log(age) of 10.3).
+* Carefully read raw output logs for failed runs. What is happening at the
+  relevant times?
+* Cursory glimpse of the logs show "hydro_newton_step returned ierr". Read MESA
+  source & mailing lists to see what exactly this means & whether this is known
+  behavior.
+* Longer shot: create a simple example, post it to MESA mailing list, see if
+  the experts have an idea.
+
+==============================
+> When do we see the divergence happening? Is it after age of universe?
+  (log(age) of 10.3).
+
+No, it's before. As early as log10(age)=9.2.
+
+==============================
+> Does Choi+ 2016 address this? (what is their minimum mass?)
+They claim to go:
+ 5< log(Age) [yr] < 10.3, 0.1 < M/Msun < 300, -2 < [Z/H] < 0.5.
+
+So a comparably reasonable space for us to do should be:
+ 5 < log(Age) [yr] < 10.3, 0.3 < M/Msun < 1.3, -1 < [Z/H] < 0.5.
+
+While we currently are doing:
+ 5.5 < log(Age) [yr] < x, 0.3 < M/Msun < 1.3, -1 < [Z/H] < 0.5.
+
+The earliest _failure_ is at log(age)~=9.2, but with an obvious
+numerically-induced spike as early as log(age)=8.7.
+(So the cheap workaround of "just impose age of universe" constraint is no
+good).
+
+
+==============================
+> Are my luminosity vs age tracks for a single star (the messed up ones) the same 
+  as the MIST ones? (Not sure if they publish them...). If not, why not?
+  In other words, are there similar wiggles at the low mass end of these track.eep 
+  files? 
+
+First, we don't expect them to be _exactly_ the same b/c we decided to do this
+different thing with solar calibration.
+HOWEVER it may be the case that we should instead aim to replicate the published 
+(on their website) MIST models, even though they don't reproduce the sun. We are 
+not exactly experts in stellar modelling. 
+Getting the sun wrong is perhaps preferable to having non-understood numerical 
+instabilities.
+
+I made 4 useful plots:
+  1. mist_sun_vs_time_near_sun_age.pdf
+  2. mist_0.39Msun_props_vs_time.pdf
+  3. mist_0.40Msun_props_vs_time.pdf
+  4. mist_0.35Msun_props_vs_time.pdf
+
+To make them, I downloaded [Fe/H]=0 evolutionary tracks from MIST at
+http://waps.cfa.harvard.edu/MIST/model_grids.html.
+
+The first is the reminder of how wrong we get the sun.
+The second is R, L, Teff for their solar metallicity 0.39Msun star.
+The third is R, L, Teff for their solar metallicity 0.40Msun star.
+The fourth is R, L, Teff for their solar metallicity 0.35Msun star.
+
+The latter two have "wiggles" for us. And the third doesn't converge.
+
+W/ MIST data, 0.39Msun and 0.40Msun don't show any wiggles.
+HOWEVER 0.35Msun __does__. So I'm not way off here! (or whatever numerical
+instabilities we're dealing w/ are in MIST's models, with their different metal
+mass fracs, as well).
+
+Creating MIST_low_mass_props_vs_time.pdf, 0.34-0.36Msun has this.
+
+[[[
+There are mentions in MIST docs of "_INTERP" models (which did not converge due to
+numerical stability issues). However it looks like these are only for high mass
+stars. (So this, and the associated interpolation scheme, is irrelevant to our
+issue).
+]]]
+
+==============================
+
+** One reasonable new idea: maybe our TIMESTEP is killing us. Some of these
+MIST models wiggle, but their MS timestep is so big that they might just "gloss
+over" whatever numerical issues we're trying to resolve... **
+
+Fri 18 Nov 2016 03:59:57 PM EST
+TODO
+
+* Carefully read raw output logs for failed runs. What is happening at the
+  relevant times?
+* Cursory glimpse of the logs show "hydro_newton_step returned ierr". Read MESA
+  source & mailing lists to see what exactly this means & whether this is known
+  behavior.
+
+
+
+
+* Carefully read raw output logs for failed runs. What is happening at the
+  relevant times?
+* Cursory glimpse of the logs show "hydro_newton_step returned ierr". Read MESA
+  source & mailing lists to see what exactly this means & whether this is known
+  behavior.
+* Longer shot: create a simple example, post it to MESA mailing list, see if
+ 
