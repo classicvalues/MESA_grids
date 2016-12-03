@@ -1,0 +1,203 @@
+Wed 30 Nov 2016 10:26:10 AM EST
+
+jk. Fri 02 Dec 2016 04:15:35 PM EST (...)
+
+==============================
+Choi's models wiggle, but do not die. Therefore they must have slightly
+different input parameters.
+
+* Read carefully thru Choi's input scripts:
+https://github.com/jieunchoi/MIST_codes/blob/master/scripts/make_inlist_inputs.py.
+
+At first pass, it looks like 
+ <<BC_LABEL>> and <<BC_TABLE>> are changing btwn tau_100 boundary
+condition tables and photosphere_tables. (Possibly important!)
+
+Working in:
+/home/luke/Dropbox/software/mesa/doc/MIST/MIST_codes
+
+/scripts/make_inlist_inputs.py shows what's happening.
+From 0.3-0.6Msun, we are in 'LowDiffBC' regime (which means calling a certain
+set of tables).
+
+Choi's variable between runs are:
+
+In [3]: mii.make_inlist_inputs('foo',0.015,'LowDiffBC')
+Out[3]: 
+[['<<MASS>>',  ['<<BC_LABEL>>',  ['<<BC_TABLE>>',           ['<<H1>>',               ['<<H2>>',                ['<<He3>>',                ['<<He4>>',            ['<<Z>>',
+  ['0.3',       ['_tau100',       ['tau_100_tables',         ['0.713620705221',       ['1.42724141044e-05',     ['4.50391172191e-05',      ['0.271319983248',     ['0.015',
+   '0.31',       '_tau100',        'tau_100_tables',          '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.32',       '_tau100',        'tau_100_tables',          '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.33',       '_tau100',        'tau_100_tables',          '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.34',       '_tau100',        'tau_100_tables',          '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.35',       '_tau100',        'tau_100_tables',          '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.36',       '_tau100',        'tau_100_tables',          '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.37',       '_tau100',        'tau_100_tables',          '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.38',       '_tau100',        'tau_100_tables',          '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.39',       '_tau100',        'tau_100_tables',          '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.4',        '_tau100',        'tau_100_tables',          '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.45',       '_tau100',        'tau_100_tables',          '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.5',        '_tau100',        'tau_100_tables',          '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.55',       '_tau100',        'tau_100_tables',          '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.3',        '_PT',            'photosphere_tables',      '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.31',       '_PT',            'photosphere_tables',      '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.32',       '_PT',            'photosphere_tables',      '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.33',       '_PT',            'photosphere_tables',      '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.34',       '_PT',            'photosphere_tables',      '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.35',       '_PT',            'photosphere_tables',      '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.36',       '_PT',            'photosphere_tables',      '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.37',       '_PT',            'photosphere_tables',      '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.38',       '_PT',            'photosphere_tables',      '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.39',       '_PT',            'photosphere_tables',      '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.4',        '_PT',            'photosphere_tables',      '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.45',       '_PT',            'photosphere_tables',      '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.5',        '_PT',            'photosphere_tables',      '0.713620705221',        '1.42724141044e-05',      '4.50391172191e-05',       '0.271319983248',      '0.015',
+   '0.55']],     '_PT']],          'photosphere_tables']],    '0.713620705221']],      '1.42724141044e-05']],    '4.50391172191e-05']],     '0.271319983248']],    '0.015']]]
+
+
+From Choi et al 2016:
+"However, for cooler dwarfs a more sensible choice is to set the boundary 
+condition deeper in the atmosphere, i.e., τ = 100. This option will result in
+more realistic models for cool low-mass stars whose atmospheres are heavily 
+influenced by molecules that are not included in the MESA interior model 
+calculations. This issue is less critical for the cool giants because the 
+structure of these stars is overall less sensitive to the boundary condition 
+(i.e., the pressure at the photosphere for giants is much closer to zero than 
+for dwarfs). We refer the reader to Section 6.2 for additional discussion on
+this topic.
+
+For our grid of models, the tau_100_tables option is used for 0.1–0.3 Msun, 
+photosphere_tables is used for 0.6–10 Msun, and simple_photosphere is used
+for 16–300 Msun. To facilitate a smooth transition between different regimes, 
+we run both tau_100_tables and photosphere_tables for 0.3–0.6 Msun and 
+photosphere_tables and simple_photosphere for 10–16 Msun. The tracks in this 
+transition region are then blended (see Section 5.2 for more details)."
+
+Reading Section 5.2: 
+The interpolation is part of their "special recipe" from MIST paper 0 (Dotter
+2015). They bring out their tracks, and then have a prescribed weight between
+each of them that they think is good.
+
+==========
+
+So it could be the case that we need to interpolate between the grids of the 
+tau_100 BCs and the photosphere_tables in the 0.3-0.6Msun range.
+
+I ran them with photosphere_tables.
+
+X Made script that makes inlists (01_make_inlists.py, as on adroit) also make 
+a HARD COPY of inlist_to_run (the thing that thas the never-changing inlists!)
+into the appropriate grid directory.
+
+(B/c now I'm making changes to the never-changing lists >_>)
+
+==========
+
+From further reading of Choi+ 2016:
+"For Mi ≤ 0.7 Msun, the models are terminated at TAMS, i.e., central {^1}H 
+abundance drops to 10^{-4}. For a 0.7 Msun star at Zsun, this limit is typically
+reached at an age > 35 Gyr."
+
+(So yes, note that this is a different termination criterion -- it's earlier
+than ours, I think. Ours says "wait for central He core mass to be >0.1Msun".
+This may just never happen for Mstar = 0.35Msun.
+
+"We note that in any grid, there is a subset of models that
+does not run to completion due to convergence issues. This is
+not generally problematic because the mass sampling is suf-
+ficiently fine such that there are enough models to smoothly
+interpolate a new EEP track and/or construct isochrones. We
+also note that there are interesting features in the tracks and
+isochrones that may appear to be numerical issues at first
+glance, but in fact a number of them are real phenomena captured
+in the MESA calculations."
+
+!! see row 5 of Figure A1. Boom. Already in this paper !!
+It's "a ^{3}He-driven instability near the transition from fully
+convective to radiative core during the MS."
+
+See 161202_Choi_figA1.png (!!)
+
+Cool. 
+
+==========
+
+X run 0.35-0.55Msun with tau_100 BCs, 0.02Msun gap rather than 
+  photosphere_tables (based on the original MIST inlist).
+
+  X  Fri 02 Dec 2016 05:45:12 PM EST
+  begin run (fortunately 44 cores are instantly available. nice.)
+
+  X look at results; update debug_summary
+
+  M0.35_Z0.015 was "bad data", but the rest seem to have at least ran.
+  (Looking at star_grid_425680_3.out, same hydro_newton_step error. However the
+  interesting thing is that IMMEDIATELY upon switching from simple photosphere
+  to tau_100_tables is when the failure happens (model 100). 
+  It's likely that this switch is the "hard-bump" that we see in radius of the 
+  merged R(t) plots)
+
+  Ok. The obvious good thing here is that many of the stars that previously
+  wiggled now do not (at least in radius; there is a minor "stepping" in
+  luminosity but these looks qualitatively like much less of an issue. Also, all
+  of those converge).
+  The only case of a star that does not converge is M0.35_Z0.015.
+
+* replicate Fig A1, row 5 of C+16
+  > need L, Teff, Mconv,core, R. (And ideally X3He, but I'm not gonna rerun the
+  > models). Can get all of them from what I have.
+
+  I can do this w/ Kalo's widget!
+  ... not quite. We want the x axis to be whatever we want. This requires
+  modding Kalo's app. This will take longer than just writing it myself (for
+  now..)
+
+  > made
+  Mconv_and_Rstar_vs_t_M0.35_Z0.0474341649025.pdf
+  HR_small_M0.35_Z0.0474341649025.pdf
+  HR_full_M0.35_Z0.0474341649025.pdf
+
+  these indicate that it's almost certainly the same thing. The nail in the
+  coffin should be star_grid_425680_4.out.
+
+  We should see a mildly-bumpy X3He,center, near 0.01 (per 3rd panel of
+  figA1_row5.png)
+
+  Uh... looking at the log, He_cntr is oscillating around 0.298 (up and down,
+  as expected, in the age range of 1e10 - 2e10 years)
+
+
+  
+
+==========
+TODO:
+* Read more about what the instability is from Choi+ 2016. 
+
+* modify grid naming convention for low-mass stars (below 0.6Msun, following
+  Choi+ 2016) to account for different BCs.
+  also, move BC setting to "inlist_cluster" (via the scripts that make these)
+  instead of 
+
+* if no convergence, change the solar metallicity to agree with what Choi+ used
+  to generate their grids (the ones w/ the wonky solar values).
+  (b/c after that, i'll have no clue what the difference is, & we should push
+  to make a replicable example of the behavior to mailing-list share)
+* Diff them with my input scripts.
+
+* if convergence (/convergence-ish), choices are:
+  1. Replicate interpolation scheme of Dotter/Choi.
+     (presumably this scheme takes the one that converges for the case that
+     one convergerges, and the other does not.)
+  2. Just take tau_100 BC tables whenever photosphere_tables *fails*
+     (but not when there's only a wiggle, & they converge)
+  3. Come up with some other interpolation scheme other than Dotter/Choi's
+
+
+
+(Perhaps, just use / adapt hers for adroit?)
+
+
+* Read MESA source & mailing lists to see what exactly this means & whether this 
+  is known  behavior.
+
+* Longer shot: create a simple example, post it to MESA mailing list, see if

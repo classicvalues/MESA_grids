@@ -1,0 +1,117 @@
+Tue 11 Oct 2016 08:57:07 AM EDT
+
+We want to run many serial jobs on adroit. (each stars gets only 1 thread).
+
+First, we'd like to run A SINGLE serial job on adroit.
+
+Following the instructions here:
+  https://www.princeton.edu/researchcomputing/education/online-tutorials/getting-started/running-serial-jobs/
+we have a script that executes run_mesa.py.
+
+However, the run_script routine in run_mesa.py does not seem to actually execute
+the script.
+Otherwise everything seems functional.
+
+==============================
+First: we want at least one functional job.
+
+It's not clear how `inlist_to_run` is being read, and whether using it
+as the dynamic job (rather than pointing to the copied inlists at INLISTS/)
+is the right approach.
+
+  lbouma@adroit3:~/software/mesa/tides-project$ cat submit_serial.cmd 
+  #!/bin/bash
+  # serial job using 1 node and 1 processor,
+  # and runs for 4 hours (max).
+  #SBATCH -N 1   # node count
+  #SBATCH --ntasks-per-node=1  # core count
+  #SBATCH -t 0:10:00
+  # sends mail when process begins, and
+  # when it ends. Make sure you define your email
+  #SBATCH --mail-type=begin
+  #SBATCH --mail-type=end
+  #SBATCH --mail-user=lbouma@princeton.edu
+  cd /home/lbouma/software/mesa/tides-project
+  srun ./run_mesa.py
+
+where "run_mesa.py" is the executable called `run_mesa_01.py` in this notes
+directory.
+
+==============================
+Ok, so we submitted a 2hour job, running a 0.8Msun star on 1 core (1 CPU) of
+a single node.
+
+The queue wait-time (on short) was basically none.
+pgplots still work.
+Running it on adroit 1 core looks like the timesteps might be a bit slower than
+crispy 16 core (duh?)
+After ~12 minutes, we're at model 330, age 6e5yr (still pre-MS contraction).
+
+==============================
+Tue 11 Oct 2016 11:58:23 AM EDT
+
+Well, actually our single star only took 30 minutes (on 1 core!).
+This is _good news_.
+
+Q: Is it worth multithreading single stars for our use case?
+  A: it's not. See below!
+  For instance, adroit has access to 20 cores per node. If we multithreaded over
+    say, 10 cores (or better, 5) this would be a way of running things like 5-10*
+    faster per star.
+  But depending on slurm's scheduling preferences, this could mean ~1.5* (or some 
+    number) longer time in queues.
+  Also: note that for short queue, you can have at most 60 cores _per user_.
+  So if you ran each star threaded over 5 cores, you could do at most 12 stars
+    batch parallelized. 
+  If we ran each star over just a single core of a single node (take 30 minutes,
+    we could do 60 stars at a shot).
+  Total time for 10,000 stars then ~ 1e4/60 * 0.5(hr) = 83hr.
+  Be aware that 1e4 stars is a lot. We can start small -- with 1e2. This gives a
+    factor of 100 less time, so 0.83hr. Much better.
+    
+Q: why does our job not know when to exit? (even though all writing works fine)
+  A: b/c pgplot server doesn't know to close. (solution is to turn off
+  pgstar once we do main runs)
+
+Q: how much space do we need for 100 stars?
+  A: ~270Mb for 2 stars-> 135Mb per star, so 13.5Gb of disk space.
+==============================
+
+Tue 11 Oct 2016 02:54:02 PM EDT
+X Wrote script to send profile_*.data into appropriate directory
+X Rewrote run_mesa.py to be compatible with a slurm job submission script that
+  submits an **array job**: run_mesa_serial.py.
+  This was sort of silly, because you wrote run_mesa.py to allow going over
+  different dimensions by direct program execution on whatever "head node" crispy
+  had. The submission works differently on adroit -- I can't have one program that
+  spams "./rn > M?.?_Z0.???.out" at bash iterating over the array self-consistently.
+  It needs to somehow talk with the slurm job -- a la "array job".
+
+Seems like we have a batch serial job script running. (!!!)
+
+We're not sure whether it's doing the right thing yet.
+For example, it might be the case that reading from the environment variable
+  is a Bad Thing if it's changing quickly..
+
+Parsed output (on crispy!).
+Looks good for 0.3Msun, 0.5Msun, 0.8Msun, 1.0Msun.
+
+* it's being buggy for M0.4_Z0.015, M0.7_Z0.015.
+
+
+==============================
+Tmrw:
+
+look at output of 421710* and debug it.
+
+crank out final technical memo edits before FRIDAY (b/c ur on a bus that day). 
+
+remember that cute statistical idea we had for metal-rich stars in kepler
+needing to have more HJs? (was there more than that?)
+
+get to demolishing your NSF. money matters.
+
+With minor exceptions:
+
+TODO:
+

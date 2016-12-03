@@ -1,0 +1,43 @@
+Wed 12 Oct 2016 09:20:58 AM EDT
+
+TODO:
+* look at output of 421710* and debug it.
+* crank out final technical memo edits before FRIDAY (b/c ur on a bus that day). 
+* remember that cute statistical idea we had for metal-rich stars in kepler
+  needing to have more HJs? (was there more than that?)
+* get to demolishing your NSF. money matters.
+==============================
+
+Looking at logs...:
+* the naming doesn't work... all M?.?'s (all masses) have M1.2.
+* ALSO it may take longer than you thought. it's not clear that even 1 job
+  finished in 1hr.
+
+* we KNOW that our main in run_mesa_serial is wrong (or at least,
+  overcomplicated)
+
+> running mesa_single (run_mesa, at M=1.1) to double-check time expectations.
+
+Job hit time limit! (after TWO HOURS!)
+At this point, it's at 8.7e9yr.
+
+So right, my time estimate per star (30min) was a factor of ~5 off because I was
+previously running it multithreaded over 5 cores.
+Expect roughly ~30*5=150minutes, or 2.5hr per star.
+
+> resubmitted M=1.1 as 421774.
+
+Wed 12 Oct 2016 12:30:07 PM EDT
+==============================
+
+* figure out many runs I/O (how do we make sure that the right "inlist_to_run"
+  is being used when we're acting as if it's a dynamic document?
+
+something's wrong. resubmitted for 3 HOURS didn't complete!!
+
+Wed 12 Oct 2016 04:14:46 PM EDT
+trying for 3hr, 59minutes. running 0.7Msun.
+
+Well, this run took from 16:14 to 16:48, and it was single core.
+
+Perhaps there's a M_star specific problem?

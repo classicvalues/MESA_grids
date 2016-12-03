@@ -1,0 +1,63 @@
+==============================
+* Use head node for interactive work only (no more than a few minutes)
+* All jobs must be run through the scheduler.
+* Allow the scheduler to route the job according to the resources it requires. 
+
+==============================
+QUEUES: 
+short 
+4 hour wall clock limit
+60 job maximum per user
+60 processor cores maximum per user
+ 
+medium 
+24 hour wall clock limit
+80 processor cores maximum
+40 processors per user
+8 jobs per user
+4 nodes per user
+ 
+long 
+15 day wall clock limit
+8 job maximum per user
+40 processor cores maximum per user
+80 processor cores maximum allocation
+
+==============================
+CPU & MEMORY
+160 processors available, twenty per node. Each node contains 64 GB of memory.
+The nodes are identified as adroit-01 through adroit-08.
+
+==============================
+SCRATCH SPACE
+at /scratch. Files not backed up. ~200Gb of local storage here.
+
+============================================================
+GETTING JOBS RUNNING
+We don't want to run parallel jobs. We're trying to at most do threaded
+serial jobs, but many of them simultaneously.
+I.e. one execution of ./star is one star. We want many thousands of stars.
+
+Ideally these will be threaded, but it's not even a necessity.
+
+I think if we did this 'right', OMP_NUM_THREADS would be 20 on this system.
+But we set it as 1 to allow many serial jobs.
+
+SERIAL JOBS:
+
+
+
+THREADED JOBS (OPENMP):
+Script in threaded.cmd:
+  #!/bin/bash 
+  # OpenMP/Multithreaded job using 12 cores and runs for 4 hours (max) 
+  #SBATCH -N 1 # node count -- For OpenMP this must be 1 
+  #SBATCH --ntasks-per-node=12 #number of threads desired 
+  #SBATCH -t 4:00:00 
+
+  srun -n 1 --cpu-bind=none a.out
+
+Then to run job:
+>> sbatch threaded.cmd
+
+

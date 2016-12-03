@@ -1,0 +1,55 @@
+Tue 18 Oct 2016 05:48:03 PM EDT
+
+Relevant things that vary btwn runs:
+
+==========
+in starjob:
+
+save_model_filename = '/home/lbouma/software/mesa/base/LOGS/M0.7_Z0.015_photospheretable.mod' !MASS! !INITIAL_Z!
+
+! CHANGE SOLAR ABUNDANCES
+      ! if `set_uniform_initial_composition` is true, then
+      ! set hydrogen and helium mass fractions according to the following:
+      ! If no h2 in current net, then this will be added to h1.
+      ! If no he3 in current net, then this will be added to he4.
+      ! use values from Table 4, protosolar of Asplund+ 2009
+      initial_h1 = 0.723785524 !INITIAL_H1! 
+      initial_h2 = 1.4476e-05 !INITIAL_H2!
+      initial_he3 = 4.33592e-05 !INITIAL_HE3!
+      initial_he4 = 0.2611566408 !INITIAL_HE4!
+      !abundances for initial Z of _0.015_end
+
+
+in controls:
+      initial_mass = 0.7 !MASS! in Msun units
+
+
+!OUTPUT OPTIONS:
+      star_history_name = 'M0.7_Z0.015_history.data' !MASS! !INITIAL_Z!
+      profiles_index_name = 'profiles_M0.7_Z0.015.index' !MASS! !INITIAL_Z!
+      profile_data_prefix = 'profile_M0.7_Z0.015_' !MASS! !INITIAL_Z!
+
+
+==========
+
+!!! Zbase? It's called in run_star_extras.f
+-> reading the code (line 70 relevant file) it looks like it's computed as
+1 - initial_h1_frac - initial_h2_frac - initial_he3_frac - initial_he4_frac.
+So it's constant btwn runs.
+
+==============================
+
+PUT THIS ALL IN `run-tides`, where the inlists will be kept :)
+
+Note: we should separate the coder tasks of creating the inlists and actually
+running the jobs once the inlists have been defined.
+(we initially did these simultaneously, but this kind of interactivity is
+discouraged in order to protect against overwrites)
+
+Ah, ALSO we'd like to index these things in a good way. For instance let's say
+we want N*M grid, for N masses, and M metallicities.
+We thus need that many indices. We could try diagonal, or just go over mass,
+then metallicity (a flattening).
+
+Make it M+1 metallicities, so that we always also run 0.015 -- the special
+solar-calibrated case.
