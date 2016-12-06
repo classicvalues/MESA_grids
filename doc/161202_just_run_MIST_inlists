@@ -173,6 +173,10 @@ X run 0.35-0.55Msun with tau_100 BCs, 0.02Msun gap rather than
 TODO:
 * Read more about what the instability is from Choi+ 2016. 
 
+* do tau_100_tables BC, with the addition of "non-special" solar abundances.
+  i.e. REPRODUCE Choi's results.
+  (grids running as of Sat 03 Dec 2016 12:38:27 AM EST on adroit)
+
 * modify grid naming convention for low-mass stars (below 0.6Msun, following
   Choi+ 2016) to account for different BCs.
   also, move BC setting to "inlist_cluster" (via the scripts that make these)

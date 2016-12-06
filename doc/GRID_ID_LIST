@@ -123,3 +123,12 @@ Here, keep everything the same in inlist_to_run, but change
 
 (n.b.: in future runs, possibly worth changing report_why_dt_limits)
 
+==============================
+grid_tau_100_tables:
+Sat 03 Dec 2016 12:10:14 AM EST
+
+0.35Msun to 0.55Msun, spaced 0.02 Msun
+-1 to 0.5 metal mass frac, 0.5dex spaced
+
+After reading carefully thru C+16's code, became clear tau_100 boundary
+conditions might be worth looking into. They were!
