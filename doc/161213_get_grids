@@ -1,0 +1,96 @@
+It's "a ^{3}He-driven instability near the transition from fully
+convective to radiative core during the MS."
+
+See 161202_Choi_figA1.png (!!)
+
+==========
+X run 0.35-0.55Msun with tau_100 BCs, 0.02Msun gap rather than 
+  photosphere_tables (based on the original MIST inlist).
+
+  X  Fri 02 Dec 2016 05:45:12 PM EST
+  begin run (fortunately 44 cores are instantly available. nice.)
+
+  X look at results; update debug_summary
+
+  M0.35_Z0.015 was "bad data", but the rest seem to have at least ran.
+  (Looking at star_grid_425680_3.out, same hydro_newton_step error. However the
+  interesting thing is that IMMEDIATELY upon switching from simple photosphere
+  to tau_100_tables is when the failure happens (model 100). 
+  Could it be that this switch is the "hard-bump" that we see in radius of the 
+  merged R(t) plots?)
+
+  Ok. The obvious good thing here is that many of the stars that previously
+  wiggled now do not (at least in radius; there is a minor "stepping" in
+  luminosity but these looks qualitatively like much less of an issue. Also, all
+  of those converge).
+  The only case of a star that does not converge is M0.35_Z0.015.
+
+X replicate Fig A1, row 5 of C+16
+  > need L, Teff, Mconv,core, R. (And ideally X3He, but I'm not gonna rerun the
+  > models). Can get all of them from what I have.
+
+  I can do this w/ Kalo's widget!
+  ... not quite. We want the x axis to be whatever we want. This requires
+  modding Kalo's app. This will take longer than just writing it myself (for
+  now..)
+
+  > made
+  Mconv_and_Rstar_vs_t_M0.35_Z0.0474341649025.pdf
+  HR_small_M0.35_Z0.0474341649025.pdf
+  HR_full_M0.35_Z0.0474341649025.pdf
+
+  these indicate that it's almost certainly the same thing. The nail in the
+  coffin should be star_grid_425680_4.out.
+
+  We should see a mildly-bumpy X3He,center, near 0.01 (per 3rd panel of
+  figA1_row5.png)
+
+  Uh... looking at the log, He_cntr is oscillating around 0.298 (up and down,
+  as expected, in the age range of 1e10 - 2e10 years)
+
+==============================
+Tue 13 Dec 2016 09:16:25 AM EST
+X Read more about what the instability is from Choi+ 2016. 
+  > A ^{3}He-induced instability during the transition from fully convective to
+  > radiative core (during MS)
+
+X do tau_100_tables BC, with the addition of "non-special" solar abundances.
+  i.e. REPRODUCE Choi's results.
+  (grids running as of Sat 03 Dec 2016 12:38:27 AM EST on adroit)
+  > result: all models do converge. (w/ some wiggles)
+
+X Run "even" numbers w/ solar (not Choi+) calibr. 
+  (see if M0.35_Z0.015 is indeed a special case, or if it's a generic problem. 
+  I.e. M0.34,M0.36,M0.38,...)
+  > did mostly, but cancelled (b/c it's a waste of time. We have production
+  > runs to do below).
+
+X modify grid & file naming convention for low-mass stars (below 0.6Msun, following
+  Choi+ 2016) to account for different BCs.
+  also, move BC setting to "inlist_cluster" (via the scripts that make these)
+  instead of the current scheme
+
+X Implement production_grid_0:
+  0.4-1.2Msun, 0.1Msun spaced
+  Z from -1 to 0.5, 0.25 dex
+  Below 0.6Msun, use tau_100_tables for BC
+  Above 0.6Msun, use photosphere_tables for BC
+  
+  (n.b. this ignores the 0.35M_Z0.015 non-convergence when using solar
+  fine-tuned protosolar abundances, b/c we don't need to go that far down in
+  mass)
+
+  X Running as of Tue 13 Dec 2016 11:11:47 AM EST
+  done & it looks good.
+
+
+==========
+TODO:
+
+* See how Kalo's interpolation works
+
+* Can still contact Jieun Choi to see if she has any further thoughts on this
+  technical issue
+
+* Longer shot: create a simple example, post it to MESA mailing list, see if
+  any broader insight

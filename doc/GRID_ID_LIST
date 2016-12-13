@@ -132,3 +132,32 @@ Sat 03 Dec 2016 12:10:14 AM EST
 
 After reading carefully thru C+16's code, became clear tau_100 boundary
 conditions might be worth looking into. They were!
+
+==============================
+grid_tau_100_Choi_Z:
+Sat 03 Dec 2016 12:10:14 AM EST
+
+0.33Msun to 0.55Msun, spaced 0.02 Msun
+-1 to 0.5 metal mass frac, 0.5dex spaced
+
+Same as above, but changed "special solar flag" to False, i.e. switched to use
+the Choi+ protosolar metal mass fractions (Y_sun_protosolar, Z_sun_protosolar)
+from table 2, rather than direct from Asplund+ 2009.
+
+All these models converged. (Great, except certainly seems odd to make an
+inconsistent step in the initial protosolar abundances as a function of stellar
+mass)
+
+==============================
+grid_production_0
+Tue 13 Dec 2016 02:02:49 PM EST
+
+0.4-1.2Msun, 0.1Msun spaced
+Z from -1 to 0.5, 0.25 dex
+Below 0.6Msun, use tau_100_tables for BC
+Above 0.6Msun, use photosphere_tables for BC
+
+(n.b. this ignores the 0.35M_Z0.015 non-convergence when using solar
+fine-tuned protosolar abundances, b/c we don't need to go that far down in
+mass)
+

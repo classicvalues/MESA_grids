@@ -143,7 +143,7 @@ X run 0.35-0.55Msun with tau_100 BCs, 0.02Msun gap rather than
   of those converge).
   The only case of a star that does not converge is M0.35_Z0.015.
 
-* replicate Fig A1, row 5 of C+16
+X replicate Fig A1, row 5 of C+16
   > need L, Teff, Mconv,core, R. (And ideally X3He, but I'm not gonna rerun the
   > models). Can get all of them from what I have.
 
