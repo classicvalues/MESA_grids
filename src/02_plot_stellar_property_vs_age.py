@@ -34,8 +34,9 @@ def main():
 
     param_list = ['R_star', 'L_star', 'R_tachocline', 'I_conv', 'I_rad',
         'I_tot']
+    ylim_list = [[-0.6,0.6],[-2,1],[-2,0.5],[-10,0.5],[-7,0],[-2.5,0.5]]
 
-    for stellar_param in param_list:
+    for ix, stellar_param in enumerate(param_list):
         for Z in Zs:
             logy = True
             plt.ioff()
@@ -72,7 +73,8 @@ def main():
 
             ylab = 'log10('+stellar_param+')' if logy else stellar_param
             agelim = [5,12]
-            ax.set(xlabel='log10(age[yr])', ylabel=ylab, xlim=agelim)
+            ax.set(xlabel='log10(age[yr])', ylabel=ylab, xlim=agelim,
+                    ylim=ylim_list[ix])
 
             plot_dir = grid_base + '/plots/'
             pdf_name = plot_dir+stellar_param+'_vs_t_varM_Z'+str(Z)+'.pdf'

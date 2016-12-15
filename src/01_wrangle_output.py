@@ -238,9 +238,9 @@ def make_profile_report(mass, Z, star_path, profile_names, mainsub, \
         out = pd.DataFrame.from_dict(out)
         tab_name = '/tables/'+mainsub+'.csv'
 
-        out.round({'age': 1, 'R_star': 4, 'L_star': 4, 'M_star': 4, 
-           'R_tachocline': 4, 'M_ini': 4, 'M_conv': 4, 'M_rad': 4, 
-           'I_conv': 4, 'I_rad': 4}).to_csv(\
+        out.round({'age': 1, 'R_star': 7, 'L_star': 7, 'M_star': 7, 
+           'R_tachocline': 7, 'M_ini': 7, 'M_conv': 7, 'M_rad': 7, 
+           'I_conv': 10, 'I_rad': 10}).to_csv(\
            base+grid_sub+tab_name, 
            index=False, 
            na_rep='NaN',

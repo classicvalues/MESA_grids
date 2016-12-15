@@ -43,16 +43,16 @@ we also had to compute w.r.t. an independent standard solar model -- CD96).
     
 
   * Come up with smarter edge identification to deal with M1.2 low-Z cases.
-    * Try: 
+    X Try: 
     dumb thing: if star mass < 1.1, upper_ignore_boundary 0.998. Else 0.99
 
-    * M1.2_Z0.00266741911506:
+    X M1.2_Z0.00266741911506:
     looks good. (handles the close convective zone)
   
-    * M1.1_Z0.0015:
+    X M1.1_Z0.0015:
     same. fixed the 1 outlier point. 
 
-    * M1.2_Z0.0015:
+    X M1.2_Z0.0015:
     the True Test. Does ok. Seems to pretty consistently identify the
     outer-most tachocline (even in cases w/ two). It might be worth pushing the
     upper_ignore_boundary to 0.999 (but tricky, b/c likely messes up pre-MS
@@ -61,17 +61,17 @@ we also had to compute w.r.t. an independent standard solar model -- CD96).
     -> could make a hyper-specific hack. Say "for this star mass, at this time,
     if there are this many boundaries, select THESE ones"
     relevant times: 
-      *9.6->9.8 Myr step (establishes "second tachocline")
-      *>2 Gyr, much of star of "semiconvectively mixing", but an inner region
+      X9.6->9.8 Myr step (establishes "second tachocline")
+      X>2 Gyr, much of star of "semiconvectively mixing", but an inner region
       creates a second convective path near the surface and "fills out"
       (I actually think the current algorithm for edge identification does
       pretty well here, since it sticks with the outermost tachocline, but it
       has a few timesteps whereI think it gets too close to the surface for
       0.998 to be sufficient)
 
-      * added hyper-specific conditions to address 2Gyr (low Z) case
+      X added hyper-specific conditions to address 2Gyr (low Z) case
 
-      * decided to ignore the 3 timesteps in the 9.6->9.8Myr range with the
+      X decided to ignore the 3 timesteps in the 9.6->9.8Myr range with the
       two tachoclines. The extra one goes away, this is for a tiny period of
       time, and it should not lead to any instabilities in interpolation.
 

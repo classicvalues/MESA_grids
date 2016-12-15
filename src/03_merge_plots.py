@@ -34,8 +34,10 @@ def main():
     plot_dir = '/home/luke/Dropbox/software/mesa/results/grid_'+\
         a.arglist[0]+'/plots/'
     all_plots = [f for f in os.listdir(plot_dir)]
-    params = ['_'.join(q) for q in [s.split('_')[:-1] for s in all_plots]]
-    Zs = np.unique([s.split('_')[-1:] for s in all_plots if 'merged' not in s])
+    params = ['_'.join(q) for q in [s.split('_')[:-1] for s in all_plots if
+        'density_profiles_linear' not in s]]
+    Zs = np.unique([s.split('_')[-1:] for s in all_plots if 'merged' not in s
+        and 'density_profiles_linear' not in s])
     
     strings_to_pdftk = []
     for param in params:
