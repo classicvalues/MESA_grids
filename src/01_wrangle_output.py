@@ -423,7 +423,7 @@ def main():
     if ao.make_specific_ρ_profile:
         mass = input('Enter star mass: [e.g., 1.2]: ')         
         metal_mass_frac = float(input('Enter Z: [e.g., 0.0015]: '))
-        star = [s for s in star_names if mass in s and metal_mass_frac in s][0]
+        star = [s for s in star_names if mass in s and str(metal_mass_frac) in s][0]
         print(star)
         mainsub = 'M'+str(mass)+'_Z'+str(metal_mass_frac)
         write_profile_report(mass, metal_mass_frac, star, mainsub, ao.run_tests_flag, 
