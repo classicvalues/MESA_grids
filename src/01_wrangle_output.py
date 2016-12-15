@@ -6,12 +6,14 @@ Description:
         * a pdf report of ρ(r), where each page is a saved time step.
         * an HR diagram (L vs Teff), where the dot color is age (see evolution)
 Usage:
-    python wrangle_output.py grid_id -tests -we -dp
+    python wrangle_output.py grid_id -spec -tests -we -dp
 Args:
     grid_id: substring identifying the MESA grid data. (e.g., "0') for "grids_0" in data.
 Options:
+    -spec: make ρ(r) plot for specific model (for which user is prompted for
+    name)
     -tests: make plots of ρ(r) tests for solar case (default false)
-    -dp: make ρ(r) plots (density profiles) for all models (warning: slow)
+    -dp: make ρ(r) plots (density profiles) for all models (warning: SLOW)
     -we: write evolution tracks (TODO: implement)
 '''
 
@@ -26,7 +28,9 @@ plt.style.use('classic')
 global R_sun, M_sun, L_sun, T_eff_sun, I_sun
 R_sun, M_sun, L_sun, T_eff_sun = 6.957e10, 1.988e33, 3.928e33, 5772 
     # Choi+ (2016) cgs values.
-I_sun = 7.07990201e53 
+I_sun = M_sun * R_sun * R_sun
+    # ignores order unity prefactor.
+I_sun_num = 7.07990201e53 
     # from numerical integration of Christensen-Dalsgaard 1996
     # see email chain with Dappen & Rhodes. Purely model-determined.
 
@@ -38,8 +42,10 @@ def plot_evolution_tracks(masses, age_lims, strs, logs):
     plt.ion()
 
     for i, mass in enumerate(masses):
-        h = mr.MesaData(logs+'/solar_'+str(mass)+'_history.data') # make MesaData object from hist file
-        ages = h.data('star_age') # extract the star_age column of the data
+        # make MesaData object from hist file
+        h = mr.MesaData(logs+'/solar_'+str(mass)+'_history.data') 
+        # extract the star_age column of the data
+        ages = h.data('star_age') 
         if i == 0:
             print('Available params:\n', [name for name in h.bulk_names])
         cax = ax.scatter(h.log_Teff[(h.star_age>age_min)&(h.star_age<age_max)], 
@@ -67,10 +73,13 @@ def find_nearest(array,value):
     idx = (np.abs(array-value)).argmin()
     return array[idx]
 
-def get_convective_radiative_bndry(dat, p):
+def get_convective_radiative_bndry(dat):
     '''
-    Returns number of boundaries detected, and radius coordinate of tacholocline's middle,
-    up to grid's precision, in units of Msun.    
+    Returns number of boundaries detected, and radius coordinate of 
+    tacholocline's middle, up to grid's precision, in units of Msun.    
+
+    dat: pandas DataFrame containing the stellar properties at a given 
+        timestep
     '''
     upper_ignore_boundary = 0.99
     grad = np.gradient(dat.mixing_type)
@@ -86,11 +95,11 @@ def get_convective_radiative_bndry(dat, p):
         tachocline_grid_middle = find_nearest(np.array(dat.radius), tachocline_ideal_middle)
         return n_boundaries, tachocline_grid_middle
 
-def make_profile_report(mass, Z, lims, star_path, profile_names, mainsub, \
+def make_profile_report(mass, Z, star_path, profile_names, mainsub, \
         make_plot=False, make_table=True, log_x=False):
     '''
-    Make pdf with ρ(r) over all timesteps (if make_plot).
     Make table that saves relevant info (if make_table).
+    Optionally, also make pdf with ρ(r) over all timesteps (if make_plot).
     '''
     minimum_age = 5e5 # yr. Only care about near ZAMS evoln and onward.
 
@@ -98,6 +107,18 @@ def make_profile_report(mass, Z, lims, star_path, profile_names, mainsub, \
     out = {'age': [], 'R_star': [], 'L_star': [], 'M_star': [], 
            'R_tachocline': [], 'M_ini': [], 'M_conv': [], 'M_rad': [], 
            'I_conv': [], 'I_rad': []}
+
+    base = '/home/luke/Dropbox/software/mesa/results/'
+    grid_sub = grid_dir.split('/')[-2]
+    if not os.path.exists(base+grid_sub):
+        os.makedirs(base+grid_sub)
+        os.makedirs(base+grid_sub+'/tables/')
+        os.makedirs(base+grid_sub+'/plots/')
+
+    if make_plot:
+        sub = 'log_r' if log_x else 'linear_r'
+        pdf_name = '/plots/'+mainsub+'_density_profiles_'+sub+'.pdf'
+        pdf = pdf_pages(base+grid_sub+pdf_name)
 
     for profile in profile_names:
         p = mr.MesaData(star_path+profile) # load profile into a MesaData instance
@@ -133,7 +154,6 @@ def make_profile_report(mass, Z, lims, star_path, profile_names, mainsub, \
                 dm_rad, r_rad = np.array(dat.dm[np.array(dat.radius)<bndry]), \
                                 np.array(dat.rmid[np.array(dat.radius)<bndry])*R_sun
                 I_rad = 2/3.*np.sum(r_rad**2 * dm_rad)
-                # Moments of inertia if I divide all radius coords in mesa by 1.02:
                 out['I_conv'].append(I_conv/I_sun)
                 out['I_rad'].append(I_rad/I_sun)
 
@@ -150,62 +170,57 @@ def make_profile_report(mass, Z, lims, star_path, profile_names, mainsub, \
                 out['I_conv'].append(I_conv/I_sun)
 
             if make_plot:
-                sub = 'log_r' if log_x else 'linear_r'
-                pdf_name = 'plots/'+mainsub+'_density_profiles_'+sub+'.pdf'
-                plt.ioff()
-                with pdf_pages(pdf_name) as pdf:
-                    f, ax = plt.subplots()
-                    norm = mpl.colors.BoundaryNorm(np.arange(-1,5,1)+0.5, plt.cm.RdYlGn.N)
+                plt.close('all')
+                f, ax = plt.subplots()
+                norm = mpl.colors.BoundaryNorm(np.arange(-1,5,1)+0.5, plt.cm.RdYlGn.N)
+
+                ymax, ymin = 4, -8
+                if log_x:
+                    cax = ax.scatter(dat.logR, dat.logRho, c=dat.mixing_type, cmap='RdYlGn', 
+                        lw=0, norm=norm)
+                    xmax, xmin = max(dat.logR), 0
+                if not log_x:
+                    cax = ax.scatter(10**dat.logR, dat.logRho, c=dat.mixing_type, cmap='RdYlGn', 
+                        lw=0, norm=norm)
+                    xmax, xmin = max(10**dat.logR), 0
+                if bndry != np.nan:
                     if log_x:
-                        cax = ax.scatter(dat.logR, dat.logRho, c=dat.mixing_type, cmap='RdYlGn', 
-                            lw=0, norm=norm)
+                        ax.vlines(np.log10(bndry), min(dat.logRho), max(dat.logRho), \
+                            colors='k', linestyles='dotted')
                     if not log_x:
-                        cax = ax.scatter(10**dat.logR, dat.logRho, c=dat.mixing_type, cmap='RdYlGn', 
-                            lw=0, norm=norm)
-                    if bndry != np.nan:
-                        if log_x:
-                            ax.vlines(np.log10(bndry), min(dat.logRho), max(dat.logRho), \
-                                colors='k', linestyles='dotted')
-                        if not log_x:
-                            ax.vlines(bndry, min(dat.logRho), max(dat.logRho), \
-                                colors='k', linestyles='dotted')
+                        ax.vlines(bndry, min(dat.logRho), max(dat.logRho), \
+                            colors='k', linestyles='dotted')
 
-                    ax.text(0.05, 0.05, \
-                        'no_mixing=0\nconvective_mixing=1\nsoftened_convective_mixing=2\n'+\
-                        'overshoot_mixing=3\nsemiconvective_mixing=4\nthermohaline_mixing=5\n\n'+\
-                        'number of <0.99R/Rstar boundaries detected: {:d}'.format(int(n_bndry)), \
-                        ha='left', va='bottom', transform=ax.transAxes, fontsize=6, zorder=11,
-                        bbox=dict(facecolor='white', edgecolor='white'))
-                    cbar = f.colorbar(cax, label='mixing_type', ticks=np.arange(-1,5,1))
-                    xlab = 'log10 (R/Rsun)' if log_x else 'R/Rsun'
-                    ax.text(0.05, 0.5, 'R_star/R_sun: {:.3g}'.format(p.photosphere_r)+\
-                        '\nR_tachocline/R_sun: {:.3g}'.format(bndry)+\
-                        '\nMESA moments of inertia:'+\
-                        '\nI_rad/I_sun: {:.3g}'.format(I_rad/I_sun)+\
-                        '\nI_conv/I_sun: {:.3g}'.format(I_conv/I_sun)+\
-                        '\nI_rad/MR^2: {:.3g}'.format(I_rad/(M_sun*R_sun**2))+\
-                        '\nI_conv/MR^2: {:.3g}'.format(I_conv/(M_sun*R_sun**2)),
-                        ha='left', va='bottom', transform=ax.transAxes,
-                        bbox=dict(facecolor='white', edgecolor='white'),
-                        fontsize=6, zorder=10)
-                    ax.set(xlabel=xlab, ylabel=r'log10 rho',
-                        ylim=[lims[0],lims[1]], xlim=[lims[2],lims[3]],
-                        title='{:.1g}Msun, at age {:.2g}yr'.format(\
-                        p.header('initial_mass'), p.header('star_age')))
+                ax.text(0.05, 0.05, \
+                    'no_mixing=0\nconvective_mixing=1\nsoftened_convective_mixing=2\n'+\
+                    'overshoot_mixing=3\nsemiconvective_mixing=4\nthermohaline_mixing=5\n\n'+\
+                    'number of <0.99R/Rstar boundaries detected: {:d}'.format(int(n_bndry)), \
+                    ha='left', va='bottom', transform=ax.transAxes, fontsize=6, zorder=11,
+                    bbox=dict(facecolor='white', edgecolor='white'))
+                cbar = f.colorbar(cax, label='mixing_type', ticks=np.arange(-1,5,1))
+                xlab = 'log10 (R/Rsun)' if log_x else 'R/Rsun'
+                ax.text(0.05, 0.5, 'R_star/R_sun: {:.3g}'.format(p.photosphere_r)+\
+                    '\nR_tachocline/R_sun: {:.3g}'.format(bndry)+\
+                    '\nMESA moments of inertia:'+\
+                    '\nI_rad/I_sun: {:.3g}'.format(I_rad/I_sun)+\
+                    '\nI_conv/I_sun: {:.3g}'.format(I_conv/I_sun)+\
+                    '\nI_rad/MR^2: {:.3g}'.format(I_rad/(M_sun*R_sun**2))+\
+                    '\nI_conv/MR^2: {:.3g}'.format(I_conv/(M_sun*R_sun**2)),
+                    ha='left', va='bottom', transform=ax.transAxes,
+                    bbox=dict(facecolor='white', edgecolor='white'),
+                    fontsize=6, zorder=10)
+                ax.set(xlabel=xlab, ylabel=r'log10 rho',
+                    ylim=[ymin,ymax], xlim=[xmin,xmax],
+                    title='{:.2g}Msun, at age {:.4g}yr'.format(\
+                    p.header('initial_mass'), p.header('star_age')))
 
-                    pdf.savefig()
-                    plt.close()
+                pdf.savefig()
+                plt.close()
+    pdf.close()
 
     if make_table:
-        # Write output table:
         out = pd.DataFrame.from_dict(out)
-        base = '/home/luke/Dropbox/software/mesa/results/'
-        grid_sub = grid_dir.split('/')[-2]
         tab_name = '/tables/'+mainsub+'.csv'
-        if not os.path.exists(base+grid_sub):
-            os.makedirs(base+grid_sub)
-            os.makedirs(base+grid_sub+'/tables/')
-            os.makedirs(base+grid_sub+'/plots/')
 
         out.round({'age': 1, 'R_star': 4, 'L_star': 4, 'M_star': 4, 
            'R_tachocline': 4, 'M_ini': 4, 'M_conv': 4, 'M_rad': 4, 
@@ -217,12 +232,13 @@ def make_profile_report(mass, Z, lims, star_path, profile_names, mainsub, \
                'M_ini', 'M_conv', 'M_rad', 'I_conv', 'I_rad'])
 
 
-def test_profile_reports(mass, Z, lims, star_path, profile_names, mainsub, log_x=False):
+def test_profile_reports(mass, Z, star_path, profile_names, mainsub, log_x=False):
     '''
     Test plots of ρ(r) over enough timesteps to trust your results
     Input: float mass, float metallicity, length 4 list of plot limits,
     profile names list from write_profile_report, logs string, log_x bool.
     '''
+    assert 0, 'fix lims calls'
     minimum_age, maximum_age = 4e9, 5.5e9 # yr. Only care about near ZAMS evoln and onward.
 
     profile_names.sort(key=natural_keys)
@@ -341,29 +357,31 @@ def write_evolution_tracks():
     plot_evolution_tracks(masses, age_lims, strs, logs)
     print('wrote evolution tracks')    
 
-def write_profile_report(mass, Z, star, mainsub, run_tests, make_ρ_profile,
-        log_x=False):
+def write_profile_report(mass, Z, star, mainsub, run_tests, make_ρ_profile, 
+    log_x=False):
     '''
     mass: of star, float in units of [Msun]
     Z: metal mass fraction (float, think relative to Zsolar=0.015)
     star: path identifying star in grid output directory
+    run_tests, make_ρ_profile: boolean
     '''
     star_path = grid_dir+star+'/LOGS/'
     profile_names = [f for f in os.listdir(star_path) if ('profile' in f) & \
             ('.data' in f) & ('M'+str(mass) in f) & (str(Z) in f)]
-    rho_min, rho_max = -7, 3.5
-    if log_x:
-        r_min, r_max = -3.5, 0.5
-    if not log_x:
-        r_min, r_max = 0, 1.05
-    lims = [rho_min, rho_max, r_min, r_max]
+
     if run_tests:
-        test_profile_reports(mass, Z, lims, star_path, profile_names, mainsub, log_x)
-        print('wrote ρ(r) test plots for M={:.2g}Msun, Z={:.2g}'.format(mass, Z))    
-    if not run_tests:
-        make_profile_report(mass, Z, lims, star_path, profile_names, mainsub,\
-                make_plot=make_ρ_profile, make_table=True, log_x=False)
-        print('wrote table and(or) plots for M={:.2g}Msun, Z={:.2g}'.format(mass, Z))    
+        test_profile_reports(mass, Z, star_path, profile_names, mainsub, log_x)
+        print('Ran test profiles')    
+    else:
+        if make_ρ_profile:
+            print('Making specific density profile...')
+            make_profile_report(mass, Z, star_path, profile_names, mainsub,\
+                    make_plot=make_ρ_profile, make_table=False, log_x=False)
+            print('Done.')
+        else:
+            make_profile_report(mass, Z, star_path, profile_names, mainsub,\
+                    make_plot=make_ρ_profile, make_table=True, log_x=False)
+            print('Wrote table and(or) plots for M={:.2g}Msun, Z={:.2g}'.format(mass, Z))    
 
 def main():
     parser = argparse.ArgumentParser()
@@ -371,7 +389,9 @@ def main():
     parser.add_argument('-tests', action='store_true', default=False,
         dest='run_tests_flag')
     parser.add_argument('-dp', action='store_true', default=False,
-        dest='make_ρ_profile_flag')
+        dest='make_all_ρ_profiles')
+    parser.add_argument('-spec', action='store_true', default=False,
+        dest='make_specific_ρ_profile')
     parser.add_argument('-we', action='store_true', default=False,
         dest='write_evoln_tracks_flag')
     ao = parser.parse_args()
@@ -383,13 +403,22 @@ def main():
     star_names = np.sort([f for f in os.listdir(grid_dir) if ('_M' in f) and 
         ('_Z' in f)])
 
-    for star in star_names:
-        mass = float(star.split('_')[1][1:])
-        metal_mass_frac = float(star.split('_')[2][1:])
-
+    if ao.make_specific_ρ_profile:
+        mass = input('Enter star mass: [e.g., 1.2]: ')         
+        metal_mass_frac = input('Enter Z: [e.g., 0.0015]: ')         
+        star = [s for s in star_names if mass in s and metal_mass_frac in s][0]
+        print(star)
         mainsub = 'M'+str(mass)+'_Z'+str(metal_mass_frac)
         write_profile_report(mass, metal_mass_frac, star, mainsub, ao.run_tests_flag, 
-                ao.make_ρ_profile_flag)
+                ao.make_specific_ρ_profile)
+    else:
+        for star in star_names:
+            mass = float(star.split('_')[1][1:])
+            metal_mass_frac = float(star.split('_')[2][1:])
+
+            mainsub = 'M'+str(mass)+'_Z'+str(metal_mass_frac)
+            write_profile_report(mass, metal_mass_frac, star, mainsub, ao.run_tests_flag, 
+                    ao.make_all_ρ_profiles)
 
     print('all done.')
 
