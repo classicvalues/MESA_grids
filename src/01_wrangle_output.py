@@ -129,7 +129,7 @@ def make_profile_report(mass, Z, star_path, profile_names, mainsub, \
             dat = bulk[wanted]
             del bulk
 
-            n_bndry, bndry = get_convective_radiative_bndry(dat, p)
+            n_bndry, bndry = get_convective_radiative_bndry(dat)
 
             out['age'].append(p.header('star_age')) # stellar age, units: yr
             out['R_star'].append(p.photosphere_r) # stellar radius, units: Rsun
