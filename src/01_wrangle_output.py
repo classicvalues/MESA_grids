@@ -100,7 +100,7 @@ def get_convective_radiative_bndry(dat, p, Z):
     boundary_radii = np.array(dat.radius[(grad != 0)&\
         (dat.radius/max(dat.radius) < upper_ignore_boundary)])
     if (boundary_radii.size < 4):
-        return 0, np.nan
+        return 0, np.nan, upper_ignore_boundary
     else:
         tachocline_bounds = np.array(boundary_radii)[:4] # outer radius 1st, inner radius last
         tachocline_ideal_middle = (tachocline_bounds[0] + tachocline_bounds[3])/2.
@@ -142,7 +142,7 @@ def make_profile_report(mass, Z, star_path, profile_names, mainsub, \
             del bulk
 
             n_bndry, bndry, upper_ignore_boundary= \
-                    get_convective_radiative_bndry(dat, p, float(Z))
+                    get_convective_radiative_bndry(dat, p, Z)
 
             out['age'].append(p.header('star_age')) # stellar age, units: yr
             out['R_star'].append(p.photosphere_r) # stellar radius, units: Rsun
@@ -393,6 +393,7 @@ def write_profile_report(mass, Z, star, mainsub, run_tests, make_ρ_profile,
                     make_plot=make_ρ_profile, make_table=False, log_x=False)
             print('Done.')
         else:
+            print('Making tables for POET interpolation...')
             make_profile_report(mass, Z, star_path, profile_names, mainsub,\
                     make_plot=make_ρ_profile, make_table=True, log_x=False)
             print('Wrote table and(or) plots for M={:.2g}Msun, Z={:.2g}'.format(mass, Z))    
@@ -419,7 +420,7 @@ def main():
 
     if ao.make_specific_ρ_profile:
         mass = input('Enter star mass: [e.g., 1.2]: ')         
-        metal_mass_frac = input('Enter Z: [e.g., 0.0015]: ')         
+        metal_mass_frac = float(input('Enter Z: [e.g., 0.0015]: '))
         star = [s for s in star_names if mass in s and metal_mass_frac in s][0]
         print(star)
         mainsub = 'M'+str(mass)+'_Z'+str(metal_mass_frac)
