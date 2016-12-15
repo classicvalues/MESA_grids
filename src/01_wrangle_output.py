@@ -73,18 +73,30 @@ def find_nearest(array,value):
     idx = (np.abs(array-value)).argmin()
     return array[idx]
 
-def get_convective_radiative_bndry(dat):
+def get_convective_radiative_bndry(dat, p, Z):
     '''
     Returns number of boundaries detected, and radius coordinate of 
     tacholocline's middle, up to grid's precision, in units of Msun.    
 
     dat: pandas DataFrame containing the stellar properties at a given 
         timestep
+    p: mesa profile header (has star mass, age, etc. as attributes)
+    Z: metal mass fraction (float)
     '''
+    # Fine tune the upper limit for radiative-convective boundary search.
+    # "Necessary" b/c at Mstar>1.1Msun, get very thin layer.
     upper_ignore_boundary = 0.99
+    if p.star_mass >= 1.1 and Z < 0.003:
+        upper_ignore_boundary = 0.998
+    if p.star_mass == 1.2 and p.header('star_age')>1.5e9 and Z < 0.003:
+        upper_ignore_boundary = 0.9999
+    if p.star_mass == 1.2 and Z < 0.003 \
+            and p.header('star_age')>9.5e6 and p.header('star_age')<9.9e6:
+        upper_ignore_boundary = 0.9999 # could fine tune; won't
+
     grad = np.gradient(dat.mixing_type)
     n_boundaries = len(grad[grad != 0])/2
-    # ignore convection near the surface
+    # Ignore convection near the surface (in Mstar!=1.2Msun cases)
     boundary_radii = np.array(dat.radius[(grad != 0)&\
         (dat.radius/max(dat.radius) < upper_ignore_boundary)])
     if (boundary_radii.size < 4):
@@ -93,7 +105,7 @@ def get_convective_radiative_bndry(dat):
         tachocline_bounds = np.array(boundary_radii)[:4] # outer radius 1st, inner radius last
         tachocline_ideal_middle = (tachocline_bounds[0] + tachocline_bounds[3])/2.
         tachocline_grid_middle = find_nearest(np.array(dat.radius), tachocline_ideal_middle)
-        return n_boundaries, tachocline_grid_middle
+        return n_boundaries, tachocline_grid_middle, upper_ignore_boundary
 
 def make_profile_report(mass, Z, star_path, profile_names, mainsub, \
         make_plot=False, make_table=True, log_x=False):
@@ -129,7 +141,8 @@ def make_profile_report(mass, Z, star_path, profile_names, mainsub, \
             dat = bulk[wanted]
             del bulk
 
-            n_bndry, bndry = get_convective_radiative_bndry(dat)
+            n_bndry, bndry, upper_ignore_boundary= \
+                    get_convective_radiative_bndry(dat, p, float(Z))
 
             out['age'].append(p.header('star_age')) # stellar age, units: yr
             out['R_star'].append(p.photosphere_r) # stellar radius, units: Rsun
@@ -194,7 +207,8 @@ def make_profile_report(mass, Z, star_path, profile_names, mainsub, \
                 ax.text(0.05, 0.05, \
                     'no_mixing=0\nconvective_mixing=1\nsoftened_convective_mixing=2\n'+\
                     'overshoot_mixing=3\nsemiconvective_mixing=4\nthermohaline_mixing=5\n\n'+\
-                    'number of <0.99R/Rstar boundaries detected: {:d}'.format(int(n_bndry)), \
+                    'number of <{:f}R/Rstar boundaries detected: {:d}'.\
+                    format(upper_ignore_boundary, int(n_bndry)), \
                     ha='left', va='bottom', transform=ax.transAxes, fontsize=6, zorder=11,
                     bbox=dict(facecolor='white', edgecolor='white'))
                 cbar = f.colorbar(cax, label='mixing_type', ticks=np.arange(-1,5,1))

@@ -1,0 +1,82 @@
+Thu 15 Dec 2016 11:29:30 AM EST
+
+X Change units of I_sun to just be M_sun * R_sun^2. Reasoning: makes more sense
+to use the simplest possible unit system (rather than with some prefactor, that
+we also had to compute w.r.t. an independent standard solar model -- CD96).
+
+* The M1.2_Z0.0015 density profile plot movie shows that there's something
+  wrong w/ how I'm ID'ing the "tachocline" for cases when there are many extra
+  boundaries (like, there's some instability in the "convective zone" that
+  creates a second "tachocline"...).
+  (See relevant email to Kalo, and now debug)
+
+  X Does this happen for other stars too?
+    X M1.0_Z0.015: 
+    Looks fine. Current implementation handles case of wonky extra zones 
+    _interior_ to the tachocline. The "toy model" of just one convective 
+    zone, and then just one radiative interior, fits.
+    There are no "semiconvective" zones.
+    X M1.0_Z0.0015:
+    Same as above. Has slightly more wonky convective zones interior, but just
+    keeping track of the "exterior-most" convective zone (except in cases where
+    it gets "split":
+        interior stuff - semiconv - overshoot mix - conv - overshoot - conv -
+        surface stuff
+    in which case, we want to ignore the surface-closest "overshoot" (...)
+    X M0.8_Z0.015:
+    Looks fine, same as above.
+    X M0.8_Z0.0015
+    Looks fine, same as above.
+    X M1.1_Z0.015
+    Looks fine, same as above.
+    X M1.1_Z0.0015
+    IDs boundaries fine. There's one model with a slight jump in R_tachocline
+    identification b/c of an extra "semiconvectively mixed" zone right outside the
+    tachocline (but it's only one timestep).
+    * M1.2_Z0.00266741911506
+    Useful. Can see specific cause of failure: "upper_ignore_boundary" of
+    R=0.99R_star is too coarse. It makes the get_convective_bndry routine
+    misidentify regions (b/c it doesn't count things within R>0.99R_star as
+    being "boundaries") .
+    This is only an issue for massive stars (M>=1.1Msun), where the convective
+    zone gets pushed very close to the stellar surface.
+    
+
+  * Come up with smarter edge identification to deal with M1.2 low-Z cases.
+    * Try: 
+    dumb thing: if star mass < 1.1, upper_ignore_boundary 0.998. Else 0.99
+
+    * M1.2_Z0.00266741911506:
+    looks good. (handles the close convective zone)
+  
+    * M1.1_Z0.0015:
+    same. fixed the 1 outlier point. 
+
+    * M1.2_Z0.0015:
+    the True Test. Does ok. Seems to pretty consistently identify the
+    outer-most tachocline (even in cases w/ two). It might be worth pushing the
+    upper_ignore_boundary to 0.999 (but tricky, b/c likely messes up pre-MS
+    contraction identification).
+    
+    -> could make a hyper-specific hack. Say "for this star mass, at this time,
+    if there are this many boundaries, select THESE ones"
+    relevant times: 
+      *9.6->9.8 Myr step (establishes "second tachocline")
+      *>2 Gyr, much of star of "semiconvectively mixing", but an inner region
+      creates a second convective path near the surface and "fills out"
+      (I actually think the current algorithm for edge identification does
+      pretty well here, since it sticks with the outermost tachocline, but it
+      has a few timesteps whereI think it gets too close to the surface for
+      0.998 to be sufficient)
+
+      * added hyper-specific conditions to address 2Gyr (low Z) case
+
+      * decided to ignore the 3 timesteps in the 9.6->9.8Myr range with the
+      two tachoclines. The extra one goes away, this is for a tiny period of
+      time, and it should not lead to any instabilities in interpolation.
+
+    * Wtf does "semiconvectively mixing" mean? (Some case where mixing theory
+      breaks down? Need to care about heat transfer of parcels, rather than
+      adiabatic treatment?) 
+
+

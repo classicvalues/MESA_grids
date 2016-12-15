@@ -154,8 +154,8 @@ Tue 13 Dec 2016 02:02:49 PM EST
 
 0.4-1.2Msun, 0.1Msun spaced
 Z from -1 to 0.5, 0.25 dex
-Below 0.6Msun, use tau_100_tables for BC
-Above 0.6Msun, use photosphere_tables for BC
+< 0.6Msun, use tau_100_tables for BC
+>= 0.6Msun, use photosphere_tables for BC
 
 (n.b. this ignores the 0.35M_Z0.015 non-convergence when using solar
 fine-tuned protosolar abundances, b/c we don't need to go that far down in
