@@ -230,7 +230,9 @@ def make_profile_report(mass, Z, star_path, profile_names, mainsub, \
 
                 pdf.savefig()
                 plt.close()
-    pdf.close()
+
+    if make_plot:
+        pdf.close()
 
     if make_table:
         out = pd.DataFrame.from_dict(out)
