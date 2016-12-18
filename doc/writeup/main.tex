@@ -155,13 +155,13 @@ of $0.4-1.2M_\odot$, we say:
 \end{cases}
 \end{align}
 
-\textbf{How dependent are our stellar parameters on this latter modeling 
-assumption?} We 
-show the case of $M_\star=0.5M_\odot$ at $\mathrm{[Z/H]}=-1,-0.5,0,0.5$ in 
-Figure FIG, where the y axis is the difference between the two parameters (in 
-whatever units are appropriate, and we're asking about L,Teff,R) between using 
-the \texttt{photosphere\_tables} and the \texttt{tau\_100\_tables} cases.
-% need to make the plot using the Choi_repl grid
+Comparing the low-mass tracks we get when reproducing the MIST models more
+exactly (Sec.~\ref{sec:replicate_MIST}), the difference between our MESA
+models, which exclusively use \texttt{tau\_100\_tables}, and those of the MIST
+grids, which interpolate between \texttt{tau\_100\_tables} and
+\texttt{photosphere\_tables}, is small\footnote{See the plots in
+\texttt{results/writeup\_plots/MESA\_MIST\_comparison}}.
+
 
 \subsection{Comparison to standard solar models}
 \label{sec:solar_calibration}
@@ -195,8 +195,8 @@ and taking the \texttt{00100M.track.eep} model.}.
 
 As a tedious aside, there is no `standard' value for the Sun's moment of 
 inertia. The quantity is purely model-determined (a direct measurement would 
-require a known torque showing a measurable effect on the sun), and is 
-generally computed as 
+require a known torque showing a measurable effect on the Sun), and in a 1D 
+stellar model is computed as 
 \begin{equation}
 I_{\mathrm{tot,\star}} = \frac{8\pi}{3} \int_0^{R_\star} r^4 \rho(r) dr.
 \end{equation}
@@ -223,6 +223,7 @@ hodge-podge I selected the model of Christensen-Dalsgaard et al, (1996).
 
 
 \subsection{Replicate the MIST profiles}
+\label{sec:replicate_MIST}
 ``But Luke!'', you say, ``you're basically replicating C+16, and 
 Fig.~\ref{fig:models_near_sun_age} says you're getting slightly different 
 results! How can we be sure that you know what you're doing?''
