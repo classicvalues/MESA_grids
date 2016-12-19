@@ -75,11 +75,10 @@ for ix, mass in enumerate(masses):
 
     # Sun age vertical line
     xmin, xmax = 5, 12
-    ymin, ymax = -0.8, 0.5
 
     ax.set(xlabel='$\log_{10}$(age [yr])', 
         ylabel='$\log_{10}$(quantity [unit in legend])',
-        xlim=[xmin, xmax], ylim=[ymin, ymax],
+        xlim=[xmin, xmax],
         title=str(mass)+'M$_\odot$. [Fe/H]=0 (n.b. MIST \& MESA have diff calibrations)')
 
     leg = ax.legend(loc='best', fontsize=fs*0.7)

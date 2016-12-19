@@ -5,7 +5,40 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{graphicx}
 \begin{document}
-\noindent Luke Bouma, \today.
+\noindent Luke Bouma, \today. MESA Stellar Evolution Grid \texttt{README}.
+
+\section{Description of directories}
+\begin{itemize}
+	\item \texttt{/data/grid\_*}: This directory is a copy of the ``work'' 
+	directory that was directly used to run the MESA models. It has all of the 
+	inlists for the respective stars. It also has all of MESA's output (photos, 
+	output logs, data logs).
+	\texttt{01\_make\_inlists.py} is the script used to generate said inlists 
+	(and shows the implementation of the logic described in 
+	Sec.~\ref{sec:MESA}).
+	
+	\item \texttt{/src/} This directory has all the scripts that are used to 
+	go from MESA output to plots and things that are human-readable.
+	Each script has descriptions and usage examples in its header. 
+	
+	\item \texttt{/results/} This directory has the plots and tables for each 
+	stellar grid output by \texttt{src} scripts.
+	
+	\item \texttt{/doc/} This directory has all the documentation for this 
+	project. This includes text files that serve as a lab-notebook, as well as 
+	this README.
+\end{itemize}
+
+If you would like to reproduce everything:
+\begin{itemize}
+	\item Install MESA r7503. Follow the MIST readme for installation of their 
+	opacity tables and other addons.
+	\item Either run the inlists as they're saved in \texttt{data/}, or 
+	regenerate them following the logic of \texttt{/data/01\_make\_inlists.py}
+	\item After running MESA, and having the stellar models, in \texttt{/src/} 
+	run: \texttt{01*}$\rightarrow$\texttt{02*}$\rightarrow$\texttt{03*}.
+	\item Look at the results.
+\end{itemize}
 
 \begin{align}
 Q'_{\star/p} &= Q_0' (P_\mathrm{tide})^\alpha (M)^\beta (M')^\gamma 
@@ -21,13 +54,13 @@ Q_\mathrm{inr}' (P_\mathrm{tide})^{\alpha_\mathrm{inr}} \quad
 \end{align}
 
 \section{MESA stellar evolution grid}	
-
+\label{sec:MESA}
 \texttt{POET} computes the orbital evolution of a system with a single star and 
 a single planet under the influence of tides.
-The tidal dissipation rate of both the star and the planet depends on the
+The tidal dissipation rate in both the planet and the star depend on the
 spin period of the body damping the tidal wave 
 (Eq.~\protect\ref{eq:dissipation_model}).
-To assign a dissipation rate, we thus need a prescription for the angular 
+To assign a rate of dissipation, we thus need a prescription for the angular 
 momentum evolution of both the star and planet.
 
 As the star evolves, its convective envelope loses angular momentum to 
@@ -62,7 +95,8 @@ That parameter space is defined as:
 \end{align}
 where the grid resolution is primarily limited by convenience (we will 
 interpolate between these grids to match them with measured masses and 
-metallicities of actual stars).
+metallicities of actual stars), and the range is set by the parameter space of 
+observational relevance.
 We begin each stellar model in its pre-main sequence\footnote{``Uniform 
 composition, $T_c=5\times10^5\,\mathrm{K}$ so no nuclear burning, and uniform 
 contraction for enough luminosity to make it fully convective'' 
@@ -73,6 +107,10 @@ $0.1M_\odot$ (this is often when the star is older than the age of the
 universe, but it is computationally cheap and convenient in later 
 interpolation).
 
+Actual jobs were run with \texttt{mesa-r7503}, installed with the appropriate 
+\texttt{mesasdk-r7503} and modified following the README of C+16. They were run 
+on \texttt{adroit} using \texttt{slurm} arrays for job submission (1 star gets 
+1 core was best use of max allocation).
 
 \subsection{Adopted physics}
 Table 1 of C+16 summarizes the physics behind our stellar evolution models 
@@ -126,6 +164,7 @@ $\mathrm{^3 He}$, $\mathrm{^4 He}$ (which \texttt{MESA} takes as input), we
 use the isotopic ratios given by Asplund et al. 2009, Table 3.
 
 \subsubsection{Transitions between boundary conditions}
+\label{sec:transitions}
 C+16 Sec. 3.3 discusses the various options by which one can constrain the 
 temperature and pressure in the outermost cell of a 1D stellar model.
 As stated by C+16, the MIST tables (and thus, ours) use a grid 
@@ -135,7 +174,7 @@ opacities of cool dwarfs such as water vapor and titanium monoxide.
 With the grid of model atmospheres computed, the standard choice is to set the 
 `boundary' at $\tau=2/3$ (the photosphere).
 However, the atmospheres of cooler dwarfs are influenced by molecules that are 
-not included in \texttt{MESA}'s interior model calculations.
+not included in \texttt{MESA}'s interior model calculations (Choi et al 2016).
 A better choice for cooler dwarfs is thus to set the boundary condition 
 at a deeper optical depth, \textit{e.g.}, at $\tau=100$.
 C+16 do this by using the \texttt{photosphere\_tables} boundary condition 
@@ -159,8 +198,9 @@ Comparing the low-mass tracks we get when reproducing the MIST models more
 exactly (Sec.~\ref{sec:replicate_MIST}), the difference between our MESA
 models, which exclusively use \texttt{tau\_100\_tables}, and those of the MIST
 grids, which interpolate between \texttt{tau\_100\_tables} and
-\texttt{photosphere\_tables}, is small\footnote{See the plots in
-\texttt{results/writeup\_plots/MESA\_MIST\_comparison}}.
+\texttt{photosphere\_tables}, is small (see the plots in
+\texttt{results/writeup\_plots/MESA\_MIST\_comparison}, and 
+Fig.~\ref{fig:MESA_MIST_comparison_0.5Msun}).
 
 
 \subsection{Comparison to standard solar models}
@@ -193,7 +233,7 @@ MIST website,
 \url{http://waps.cfa.harvard.edu/MIST/data/tarballs_v1.0/MIST_v1.0_feh_p0.00_afe_p0.0_vvcrit0.4_EEPS.tar.gz},
 and taking the \texttt{00100M.track.eep} model.}.
 
-As a tedious aside, there is no `standard' value for the Sun's moment of 
+As an obscure aside, there is no `standard' value for the Sun's moment of 
 inertia. The quantity is purely model-determined (a direct measurement would 
 require a known torque showing a measurable effect on the Sun), and in a 1D 
 stellar model is computed as 
@@ -208,9 +248,8 @@ Global Earth Physics (1995)). An older `standard' solar model is Table 28.3 of
 Schwarzschild (1958). Other values are given by M. Bursa et al., Studia 
 Geophysica et Geodaftica (1996), Iorio, Solar Physics, 1:47, (2012), and Komm 
 et al., Astrophysical J., 586, 650, (2003).
-As a heavily-cited and somewhat-recent `standard solar model' (and one that 
-`worked', compared to the recent ones that use Asplund abundances), from this 
-hodge-podge I selected the model of Christensen-Dalsgaard et al, (1996). 
+As a heavily-cited and somewhat-recent `standard solar model', from this 
+hodge-podge I selected the model of Christensen-Dalsgaard et al (1996). 
 
 
 \begin{figure}[t]
@@ -229,24 +268,42 @@ Fig.~\ref{fig:models_near_sun_age} says you're getting slightly different
 results! How can we be sure that you know what you're doing?''
 Answer: by replicating the actual MIST profiles to the best of my ability,
 following the description from C+16 and their published \texttt{inlists}.
-This gives Fig.~\ref{fig:MESA_MIST_comparison_0.8Msun}.
+This gives Figs.~\ref{fig:MESA_MIST_comparison_0.7Msun} 
+and~\ref{fig:MESA_MIST_comparison_0.5Msun}.
 
 \begin{figure}[t]
 	\centering
-  \includegraphics[width=\textwidth]{figs/{MESA_MIST_comparison_0.8Msun}.pdf}
-  \caption{Replicating the MIST models (close enough that I'm OK calling them
-    `replicated') in the \texttt{Choi\_repl} MESA grids.
-  This plot is for $M_\star=0.8M_\odot$, $\mathrm{[Fe/H]=0}$ ($Z=0.015$
-  for the \texttt{production\_0} grids, $Z=0.0142$ for \texttt{Choi\_repl}.
+  \includegraphics[width=\textwidth]{figs/MESA_MIST_comparison/{0.7Msun_MESA_MIST_comparison}.pdf}
+  \caption{The \texttt{Choi\_repl} MESA grids (dotted lines) are my attempt at 
+  replicating the  MIST models (solid lines).
+  The actual grids I'm arguing we should use are \texttt{production\_0}, which 
+  are slightly different. 
+  This plot is for $M_\star=0.7M_\odot$, $\mathrm{[Fe/H]=0}$ ($Z=0.015$
+  for the \texttt{production\_0} grids, $Z=0.0142$ for \texttt{Choi\_repl}).
+  \texttt{Choi\_repl} is pretty close to the published grid from C+16.
+  See all the masses in \texttt{/results/writeup\_plots/MESA\_MIST\_comparison}
   }
-	\label{fig:MESA_MIST_comparison_0.8Msun}
+	\label{fig:MESA_MIST_comparison_0.7Msun}
+\end{figure}
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\textwidth]{figs/MESA_MIST_comparison/{0.5Msun_MESA_MIST_comparison}.pdf}
+	\caption{Same as Fig.~\ref{fig:MESA_MIST_comparison_0.7Msun}, but for 
+	$0.5M_\odot$. Here I did not reproduce the interpolation scheme described 
+	in Sec.~\ref{sec:transitions}, but the \texttt{Choi\_repl} line is still 
+	close-ish to C+16 (but not as close of a reproduction as for 
+	$M_\star\geq0.6 M_\odot$).
+	}
+	\label{fig:MESA_MIST_comparison_0.5Msun}
 \end{figure}
 
 
 \subsection{The actual grid in $M_\star$ and $Z$}
-Satisfied with our sanity checks,
-the resulting grid of stellar evolutionary tracks is attached in TABLE, and 
-with select models shown in Fig.~\ref{fig:grids}.
+Satisfied with our sanity checks, I show the resulting grid of stellar 
+evolutionary tracks in Fig.~\ref{fig:grids}.
+The relevant tables are available in 
+\texttt{/results/grid\_production\_0/tables}.
+
 
 \newpage
 \clearpage
@@ -266,5 +323,7 @@ with select models shown in Fig.~\ref{fig:grids}.
 	}
 	\label{fig:grids}
 \end{figure}
+
+
 
 \end{document}
