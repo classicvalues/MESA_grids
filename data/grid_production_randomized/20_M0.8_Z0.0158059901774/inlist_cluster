@@ -1,0 +1,28 @@
+&star_job  
+
+    !claim: after mesa v6794, they produce LOG dirs for you
+    !save_model_filename = '/home/lbouma/software/mesa/base/LOGS/M0.8_Z0.0158059901774_photospheretable.mod' !MASS! !INITIAL_Z!
+
+    ! initial abundances
+    initial_h1 = 0.722324024376 !INITIAL_H1!
+    initial_h2 = 1.44467694229e-05 !INITIAL_H2!
+    initial_he3 = 4.34680194205e-05 !INITIAL_HE3!
+    initial_he4 = 0.261812070658 !INITIAL_HE4!
+    !abundances for initial metal mass fraction, Z, of _0.0158059901774_end
+    !where solar is Z=0.015
+
+    !see Choi+ 2016 Sec 5.2 and 3.3. They do it mass-dependent.
+    !Either `photosphere_tables' or `tau_100_tables'
+    extras_cpar(1) = 'photosphere_tables' !BC_TABLE!
+
+/ ! end of star_job namelist
+
+&controls
+      initial_mass = 0.8 !MASS! in Msun units
+
+      !output options:
+      star_history_name = 'M0.8_Z0.0158059901774_history.data' !MASS! !INITIAL_Z!
+      profiles_index_name = 'profiles_M0.8_Z0.0158059901774.index' !MASS! !INITIAL_Z!
+      profile_data_prefix = 'profile_M0.8_Z0.0158059901774_' !MASS! !INITIAL_Z!
+
+/ ! end of controls namelist

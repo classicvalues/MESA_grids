@@ -31,7 +31,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('arglist', nargs=1)
     a = parser.parse_args()
-    plot_dir = '/home/luke/Dropbox/software/mesa/results/grid_'+\
+    plot_dir = '/home/luke/Dropbox/proj/mesa/results/grid_'+\
         a.arglist[0]+'/plots/'
     all_plots = [f for f in os.listdir(plot_dir)]
     params = ['_'.join(q) for q in [s.split('_')[:-1] for s in all_plots if

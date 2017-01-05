@@ -6,7 +6,7 @@ Description:
         * a pdf report of ρ(r), where each page is a saved time step.
         * an HR diagram (L vs Teff), where the dot color is age (see evolution)
 Usage:
-    python wrangle_output.py grid_id -spec -tests -we -dp
+    python 01_wrangle_output.py grid_id -spec -tests -we -dp
 Args:
     grid_id: substring identifying the MESA grid data. (e.g., "0') for "grids_0" in data.
 Options:
@@ -120,7 +120,7 @@ def make_profile_report(mass, Z, star_path, profile_names, mainsub, \
            'R_tachocline': [], 'M_ini': [], 'M_conv': [], 'M_rad': [], 
            'I_conv': [], 'I_rad': []}
 
-    base = '/home/luke/Dropbox/software/mesa/results/'
+    base = '/home/luke/Dropbox/proj/mesa/results/'
     grid_sub = grid_dir.split('/')[-2]
     if not os.path.exists(base+grid_sub):
         os.makedirs(base+grid_sub)
@@ -414,7 +414,7 @@ def main():
     ao = parser.parse_args()
     assert len(ao.args) == 1, 'First arg is grid ID of relevant data file'
 
-    base_data = '/home/luke/Dropbox/software/mesa/data/grid_'
+    base_data = '/home/luke/Dropbox/proj/mesa/data/grid_'
     global grid_dir
     grid_dir = base_data + ao.args[0] + '/'
     star_names = np.sort([f for f in os.listdir(grid_dir) if ('_M' in f) and 

@@ -24,7 +24,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('arglist', nargs=1)
     a = parser.parse_args()
-    grid_base = '/home/luke/Dropbox/software/mesa/results/grid_'+a.arglist[0]
+    grid_base = '/home/luke/Dropbox/proj/mesa/results/grid_'+a.arglist[0]
 
     table_paths = get_table_paths(grid_base)
     star_names = [tp.split('/')[-1][:-4] for tp in table_paths]
