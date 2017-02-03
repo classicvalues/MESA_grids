@@ -90,8 +90,11 @@ directly used them to compute stellar evolutionary tracks
 across our desired parameter space.
 That parameter space is defined as:
 \begin{align}
-0.4 &\leq M_\star / M_\odot \leq 1.2\quad (0.1M_\odot\ \mathrm{spaced}) \\
--1 &\leq \mathrm{[Z/H]} \leq 0.5\quad (0.25\mathrm{dex\ spaced}),
+0.4 &\leq M_\star / M_\odot \leq 1.2\quad (0.1M_\odot\ \mathrm{spaced}) 
+\label{eq:grid_defn0}\\
+-1 &\leq \log_{10} Z/Z_{\odot,\mathrm{protosolar}} \leq 0.5\quad 
+(0.25\mathrm{dex\ spaced}),
+\label{eq:grid_defn1}
 \end{align}
 where the grid resolution is primarily limited by convenience (we will 
 interpolate between these grids to match them with measured masses and 
@@ -146,8 +149,7 @@ Serenelli 2010 `New results on standard solar models' and Bergemann \&
 Serenelli 2014, `Solar Abundance Problem'.}
 
 In the general case, we then specify the metallicity $\mathrm{[Z/H]=[Fe/H]}$ of 
-a given star with respect to $Z_{\odot,\mathrm{protosolar}} = 0.0150$. For 
-instance, $\mathrm{[Z/H]=-1}$ corresponds to a metal mass fraction of $0.00150$.
+a given star with respect to $Z_{\odot,\mathrm{protosolar}} = 0.0150$. 
 Given $Z$, we find the corresponding hydrogen and helium mass fractions via
 \begin{align}
 Y_p &= 0.249 
@@ -162,6 +164,32 @@ of the Planck Collaboration (2015).
 To find the initial mass fractions of $\mathrm{^1H}$, $\mathrm{^2H}$, 
 $\mathrm{^3 He}$, $\mathrm{^4 He}$ (which \texttt{MESA} takes as input), we 
 use the isotopic ratios given by Asplund et al. 2009, Table 3.
+
+As a note of warning, $\mathrm{[Z/H]=-1}$ does \textit{not} correspond to a 
+metal mass fraction of $0.00150$.
+This is because 
+\begin{equation}
+\mathrm{[Fe/H]} \equiv \mathrm{[Z/H]} = \log_{10} 
+\left(\frac{Z}{Z_{\odot,\mathrm{protosolar}}} \right)
+-
+\log_{10} \left(\frac{X}{X_{\odot,\mathrm{protosolar}}} \right)
+\neq
+\log_{10} \left(\frac{Z}{Z_{\odot,\mathrm{protosolar}}} \right).
+\end{equation}
+Given a specific metal mass fraction $Z$, the appropriate metallicity 
+$\mathrm{[Z/H]}$ (found by rearranging) is 
+\begin{equation}
+\mathrm{[Z/H]} = \log_{10} \left(\frac{Z}{Z_{\odot,\mathrm{protosolar}}}\right) 
+- \log_{10} \left(\frac{1}{X_{\odot,\mathrm{protosolar}}} \left[1-Y_p - 
+Z\left(1 + \frac{Y_{\odot,\mathrm{protosolar}} - 
+Y_p}{Z_{\odot,\mathrm{protosolar}}}\right)\right] \right).
+\label{eq:metallicity_to_mass_frac}
+\end{equation}
+With this correction of the hydrogen mass fraction, our grid, defined by 
+Eqs.~\ref{eq:grid_defn0} and~\ref{eq:grid_defn1}, has stars with metallicities 
+$\mathrm{[Fe/H]}$
+of \texttt{[-1.01444556, -0.76321518, -0.51101857, -0.25708473, 0., 0.2628914 
+, 0.53680605]}.
 
 \subsubsection{Transitions between boundary conditions}
 \label{sec:transitions}
@@ -317,9 +345,10 @@ The relevant tables are available in
 	The thick black lines are $\mathrm{[Fe/H]}=0$ ($Z\equiv Z_\odot = 0.015$) 
 	models, 
 	varying over mass.
-	The thinner gray lines vary $\mathrm{[Fe/H]}=-1\ \mathrm{to}\ 0.5$, where 
-	fainter means lower metallicity. They are shown for $1.1$ and 
-	$0.5M_\odot$.		
+	The thinner gray lines vary $\mathrm{[Fe/H]}\approx-1\ \mathrm{to}\ 0.5$, 
+	where fainter means lower metallicity (see 
+	Eq.~\ref{eq:metallicity_to_mass_frac} for description of why `$\approx$'). 
+	The thin gray lines are plotted for $1.1$ and $0.5M_\odot$.		
 	}
 	\label{fig:grids}
 \end{figure}
