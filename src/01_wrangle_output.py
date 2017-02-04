@@ -133,6 +133,7 @@ def make_profile_report(mass, Z, star_path, profile_names, mainsub, \
         pdf = pdf_pages(base+grid_sub+pdf_name)
 
     for profile in profile_names:
+        #p.bulknames is a list of the properties available in the MESA data files
         p = mr.MesaData(star_path+profile) # load profile into a MesaData instance
         if p.header('star_age') > minimum_age:
             bulk = pd.DataFrame(p.bulk_data)
